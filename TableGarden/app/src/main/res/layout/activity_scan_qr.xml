@@ -2,17 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg">
 
     <Button
         android:id="@+id/button1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="扫一扫"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        />
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:text="扫码连接"
+        android:textColor="#ffffff"
+        android:textSize="30dp"
+        android:background="@drawable/scan_bt"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 
 

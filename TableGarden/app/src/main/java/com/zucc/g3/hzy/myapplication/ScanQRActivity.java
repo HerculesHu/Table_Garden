@@ -8,10 +8,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
+import org.litepal.crud.DataSupport;
 import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -41,6 +44,17 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
          * 初始化组件
          */
         initView();
+        List<QRcode> code= DataSupport.findAll(QRcode.class);
+        if(code.isEmpty())
+        {
+
+        }
+        else
+        {
+        QRcode id=  code.get(0);
+        Toast.makeText(this, "" + id.getSubtopic()+id.getPubtopic()+id.getIP(), Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void initView() {
@@ -67,7 +81,20 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
                 }
                 if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                     String result = bundle.getString(CodeUtils.RESULT_STRING);
-                    Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
+
+                    Gson gson = new Gson();
+//                    {"IP":"123.206.127.199","pubtopic":"1","subtopic":"2"}
+                    QRcode qrcode=new QRcode();
+                    try {
+                     qrcode=gson.fromJson(result, QRcode.class);
+                    } catch (JsonParseException e) {
+                        Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
+                    }
+                    DataSupport.deleteAll(QRcode.class);
+                    qrcode.save();
+                    Toast.makeText(this, "解析结果:" + qrcode.getIP()+qrcode.getPubtopic()+qrcode.getSubtopic(), Toast.LENGTH_LONG).show();
+
+
                 } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
                     Toast.makeText(ScanQRActivity.this, "解析二维码失败", Toast.LENGTH_LONG).show();
                 }
@@ -81,14 +108,10 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
                     .show();
         }
     }
-
-
     /**
      * 请求CAMERA权限码
      */
     public static final int REQUEST_CAMERA_PERM = 101;
-
-
     /**
      * EsayPermissions接管权限处理逻辑
      * @param requestCode
@@ -98,7 +121,6 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         // Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
@@ -166,4 +188,6 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
             startActivityForResult(intent, REQUEST_CODE);
         }
     }
+
+
 }
