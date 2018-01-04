@@ -1,8 +1,10 @@
 package com.zucc.g3.hzy.myapplication;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -31,7 +33,7 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
      * 扫描跳转Activity RequestCode
      */
     public static final int REQUEST_CODE = 111;
-
+    private Vibrator vibrator;
     public Button button1 = null;
 
 
@@ -44,6 +46,12 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
          * 初始化组件
          */
         initView();
+        chack();
+
+    }
+
+
+    private void chack(){
         List<QRcode> code= DataSupport.findAll(QRcode.class);
         if(code.isEmpty())
         {
@@ -51,12 +59,18 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
         }
         else
         {
-        QRcode id=  code.get(0);
-        Toast.makeText(this, "" + id.getSubtopic()+id.getPubtopic()+id.getIP(), Toast.LENGTH_LONG).show();
+            QRcode id=  code.get(0);
+           // Toast.makeText(this, "" + id.getSubtopic()+id.getPubtopic()+id.getIP(), Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(ScanQRActivity.this, MainActivity.class);
+            Bundle bundle=new Bundle();
+            bundle.putString("IP", id.getIP()+"");
+            bundle.putString("Pubtopic", id.getPubtopic()+"");
+            bundle.putString("Subtopic", id.getSubtopic()+"");
+            intent.putExtras(bundle);
+            startActivity(intent);
+            this.finish();
         }
-
     }
-
     private void initView() {
         button1 = (Button) findViewById(R.id.button1);
         /**
@@ -88,11 +102,16 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
                     try {
                      qrcode=gson.fromJson(result, QRcode.class);
                     } catch (JsonParseException e) {
-                        Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
+                      //  Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
                     }
                     DataSupport.deleteAll(QRcode.class);
                     qrcode.save();
-                    Toast.makeText(this, "解析结果:" + qrcode.getIP()+qrcode.getPubtopic()+qrcode.getSubtopic(), Toast.LENGTH_LONG).show();
+                   // Toast.makeText(this, "解析结果:" + qrcode.getIP()+qrcode.getPubtopic()+qrcode.getSubtopic(), Toast.LENGTH_LONG).show();
+                    vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+                    long [] pattern = {100,0,0,0};   // 停止 开启 停止 开启
+                    vibrator.vibrate(pattern,-1);           //重复两次上面的pattern 如果只想震动一次，index设为-1
+                    chack();
+
 
 
                 } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {

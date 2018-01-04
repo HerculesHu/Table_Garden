@@ -24,9 +24,12 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 public class MainActivity extends Activity  implements Button.OnClickListener{
 
-    private final static String host="182.254.140.181:3381";
+    private String host="127.0.0.1:1883";
     private final static String username="";
     private final static String password="";
+    private String topic_pub="";
+    private String topic_sub="";
+
 
 
     private final static int CONNECTED=1;
@@ -43,6 +46,11 @@ public class MainActivity extends Activity  implements Button.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Bundle bundle = this.getIntent().getExtras();
+        topic_pub=bundle.getString("Pubtopic");
+        topic_sub=bundle.getString("Subtopic");
+        host=bundle.getString("IP");
+
         pubTopic=(EditText)findViewById(R.id.pubTopic);
         pubMsg=(EditText)findViewById(R.id.pubMessage);
         subTopic=(EditText)findViewById(R.id.subTopic);
@@ -146,7 +154,7 @@ public class MainActivity extends Activity  implements Button.OnClickListener{
         if(v==pubButton){
             if(pubTopic.getText().toString().length()>0) {
                 try {
-                    mqttClient.publish(pubTopic.getText().toString(), pubMsg.getText().toString().getBytes(), 1, false);
+                    mqttClient.publish(topic_pub, pubMsg.getText().toString().getBytes(), 1, false);
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }
@@ -155,7 +163,7 @@ public class MainActivity extends Activity  implements Button.OnClickListener{
         else if(v==subButton) {
             if (subTopic.getText().toString().length() > 0) {
                 try {
-                    mqttClient.subscribe(subTopic.getText().toString(), 2);
+                    mqttClient.subscribe(topic_sub, 2);
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }
