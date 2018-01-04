@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char* ssid = "12";//连接的路由器的名字
-const char* password = "12345678";//连接的路由器的密码
+const char* ssid = "Li-513";//连接的路由器的名字
+const char* password = "ubilabsdemo";//连接的路由器的密码
 const char* mqtt_server = "123.206.127.199";//服务器的地址
 
 WiFiClient espClient;
@@ -284,11 +284,11 @@ void loop() {//主循环
 
   long now = millis();//记录当前时间
     long now2 = millis();//记录当前时间
-  if (now - lastMsg > 1000) {//每隔1秒发一次信号
+  if (now - lastMsg > 5000) {//每隔5秒发一次信号
     lastMsg = now;//刷新上一次发送数据的时间
   sending();
   }
-  if (now2 - lastMsg2 > 1500) {//每隔1.5秒发一次信号
+  if (now2 - lastMsg2 > 500) {//每隔0.5秒发一次信号
    lastMsg2 = now2;//刷新上一次发送数据的时间
   encodeJson();
    client.publish("farmbox", msg6);
