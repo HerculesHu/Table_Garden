@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,26 +23,30 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class MainActivity extends Activity  implements Button.OnClickListener{
 
-    private String host="127.0.0.1:1883";
-    private final static String username="";
-    private final static String password="";
+public class MainActivity extends Activity  implements Button.OnClickListener , CompoundButton.OnCheckedChangeListener{
+
+    private String HOST="127.0.0.1:1883";
+    private final static String USERNAME="";
+    private final static String PWD="";
     private String topic_pub="";
     private String topic_sub="";
 
-
+    private boolean swc=false;//保护开关是否开启
 
     private final static int CONNECTED=1;
     private final static int LOST=2;
     private final static int FAIL=3;
     private final static int RECEIVE=4;
 
-    private EditText pubTopic,pubMsg,subTopic;
+    private EditText pubTopic,pubMsg;
     private TextView subMsg;
-    private Button pubButton,subButton,clearButton;
+    private Button pubButton,clearButton;
     private MqttAsyncClient mqttClient;
+    private Switch switch_connect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,19 +55,21 @@ public class MainActivity extends Activity  implements Button.OnClickListener{
         Bundle bundle = this.getIntent().getExtras();
         topic_pub=bundle.getString("Pubtopic");
         topic_sub=bundle.getString("Subtopic");
-        host=bundle.getString("IP");
+        HOST=bundle.getString("IP");
+
+        switch_connect = (Switch) findViewById(R.id.sw_connect);
+        switch_connect.setOnCheckedChangeListener(this);
 
         pubTopic=(EditText)findViewById(R.id.pubTopic);
         pubMsg=(EditText)findViewById(R.id.pubMessage);
-        subTopic=(EditText)findViewById(R.id.subTopic);
+
         subMsg=(TextView)findViewById(R.id.submessage);
         pubButton=(Button)findViewById(R.id.pubButton);
-        subButton=(Button)findViewById(R.id.subButton);
+
         clearButton=(Button)findViewById(R.id.clearButton);
         pubButton.setOnClickListener(this);
-        subButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
-        connectBroker();
+
     }
 
     private Handler handler=new Handler(){
@@ -71,6 +79,7 @@ public class MainActivity extends Activity  implements Button.OnClickListener{
                 Toast.makeText(MainActivity.this,"连接成功",Toast.LENGTH_SHORT).show();
             }else if(msg.what==LOST){
                 Toast.makeText(MainActivity.this,"连接丢失，进行重连",Toast.LENGTH_SHORT).show();
+
             }else if(msg.what==FAIL){
                 Toast.makeText(MainActivity.this,"连接失败",Toast.LENGTH_SHORT).show();
             }else if(msg.what==RECEIVE){
@@ -80,6 +89,45 @@ public class MainActivity extends Activity  implements Button.OnClickListener{
         }
     };
 
+
+//滑块滑动
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (buttonView.getId()== R.id.sw_connect){
+            if(isChecked){
+                connectBroker();
+                swc=true;
+                delay_connector();
+            }
+            else{
+                Toast.makeText(MainActivity.this,"断开连接",Toast.LENGTH_SHORT).show();
+                try {
+                    mqttClient.disconnect();
+                    swc=false;
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+
+    //异步线程连接订阅mqtt消息
+    private void delay_connector() {
+        Timer timer=new Timer();
+        TimerTask task=new TimerTask(){
+            public void run(){
+                try {
+                    mqttClient.subscribe(topic_sub, 2);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        timer.schedule(task, 500);
+    }
+
+    //判断是否接收成功
     private IMqttActionListener mqttActionListener=new IMqttActionListener() {
         @Override
         public void onSuccess(IMqttToken asyncActionToken) {
@@ -99,6 +147,7 @@ public class MainActivity extends Activity  implements Button.OnClickListener{
         }
     };
 
+    ////创建mqtt监听
     private MqttCallback callback=new MqttCallback() {
         @Override
         public void connectionLost(Throwable cause) {
@@ -124,10 +173,11 @@ public class MainActivity extends Activity  implements Button.OnClickListener{
         }
     };
 
+
+    //mqtt事务处理中心
     private void connectBroker(){
         try {
-            mqttClient=new MqttAsyncClient("tcp://"+host,"ClientID"+Math.random(),new MemoryPersistence());
-//            mqttClient.connect(getOptions());
+            mqttClient=new MqttAsyncClient("tcp://"+HOST,"ClientID"+Math.random(),new MemoryPersistence());
             mqttClient.connect(getOptions(),null,mqttActionListener);
             mqttClient.setCallback(callback);
         } catch (MqttException e) {
@@ -135,13 +185,15 @@ public class MainActivity extends Activity  implements Button.OnClickListener{
         }
     }
 
-    private MqttConnectOptions getOptions(){
 
+    //配置mqtt长连接
+    private MqttConnectOptions getOptions(){
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(true);//重连不保持状态
-        if(username!=null&&username.length()>0&&password!=null&&password.length()>0){
-            options.setUserName(username);//设置服务器账号密码
-            options.setPassword(password.toCharArray());
+        //如果需要设置mqtt数据用户名和密码
+        if(USERNAME!=null&&USERNAME.length()>0&&PWD!=null&&PWD.length()>0){
+            options.setUserName(USERNAME);//设置服务器账号密码
+            options.setPassword(PWD.toCharArray());
         }
         options.setConnectionTimeout(10);//设置连接超时时间
         options.setKeepAliveInterval(30);//设置保持活动时间，超过时间没有消息收发将会触发ping消息确认
@@ -155,15 +207,6 @@ public class MainActivity extends Activity  implements Button.OnClickListener{
             if(pubTopic.getText().toString().length()>0) {
                 try {
                     mqttClient.publish(topic_pub, pubMsg.getText().toString().getBytes(), 1, false);
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        else if(v==subButton) {
-            if (subTopic.getText().toString().length() > 0) {
-                try {
-                    mqttClient.subscribe(topic_sub, 2);
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }
