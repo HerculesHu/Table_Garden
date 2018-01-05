@@ -22,12 +22,14 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends Activity  implements Button.OnClickListener , CompoundButton.OnCheckedChangeListener{
+public class MainActivity extends AppCompatActivity  implements Button.OnClickListener , CompoundButton.OnCheckedChangeListener{
 
     private String HOST="127.0.0.1:1883";
     private final static String USERNAME="";
@@ -36,13 +38,14 @@ public class MainActivity extends Activity  implements Button.OnClickListener , 
     private String topic_sub="";
 
     private boolean swc=false;//保护开关是否开启
+    private boolean wait=true;//判断按键等待延时
+
 
     private final static int CONNECTED=1;
     private final static int LOST=2;
     private final static int FAIL=3;
     private final static int RECEIVE=4;
 
-    private EditText pubTopic,pubMsg;
     private TextView subMsg;
     private Button pubButton,clearButton;
     private MqttAsyncClient mqttClient;
@@ -59,10 +62,6 @@ public class MainActivity extends Activity  implements Button.OnClickListener , 
 
         switch_connect = (Switch) findViewById(R.id.sw_connect);
         switch_connect.setOnCheckedChangeListener(this);
-
-        pubTopic=(EditText)findViewById(R.id.pubTopic);
-        pubMsg=(EditText)findViewById(R.id.pubMessage);
-
         subMsg=(TextView)findViewById(R.id.submessage);
         pubButton=(Button)findViewById(R.id.pubButton);
 
@@ -200,18 +199,59 @@ public class MainActivity extends Activity  implements Button.OnClickListener , 
         return options;
     }
 
+    private String buildJSON(int SHH,int ST,int SH,int opLT,int LtDl){
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("SHH", SHH);
+            obj.put("ST", ST);
+            obj.put("SH", SH);
+            obj.put("opLt", opLT);
+            obj.put("LtDl", LtDl);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return obj.toString();
+    }
+
+    //mqtt延时，防止用户暴力按压
+    private void delay(int time) {
+        Timer timer=new Timer();
+        TimerTask task=new TimerTask(){
+            public void run(){
+                wait=true;
+            }
+        };
+        timer.schedule(task, time);//设置两次发送时间间隔
+    }
+
+
     @Override
     public void onClick(View v) {
 
-        if(v==pubButton){
-            if(pubTopic.getText().toString().length()>0) {
+        if(v==pubButton)
+        {
+            if (wait&&swc)
+            {
                 try {
-                    mqttClient.publish(topic_pub, pubMsg.getText().toString().getBytes(), 1, false);
+                    mqttClient.publish(topic_pub, buildJSON(0, 30, 80, 8, 13).getBytes(), 1, false);
                 } catch (MqttException e) {
                     e.printStackTrace();
+                } finally {
+                    wait = false;
+                    delay(800);
                 }
             }
+            else  if(!swc)
+            {
+                Toast.makeText(MainActivity.this,"请先连接再发送",Toast.LENGTH_SHORT).show();
+            }
+            else if(!wait)
+            {
+                Toast.makeText(MainActivity.this,"亲，命令已经到达，不要频繁发送",Toast.LENGTH_SHORT).show();
+            }
+
         }
+
         else if(v==clearButton){
             subMsg.setText("");
         }

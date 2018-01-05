@@ -19,14 +19,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ScanQRActivity">
+        <activity android:name=".ScanQRActivity"
+            android:label="桌面花园">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"
-            android:label="扫码链接您的培养箱" />
+            android:label="桌面花园" />
     </application>
 
 </manifest>
