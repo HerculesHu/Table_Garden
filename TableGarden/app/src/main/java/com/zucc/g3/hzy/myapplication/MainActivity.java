@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         switch_connect.setOnCheckedChangeListener(this);
         subMsg=(TextView)findViewById(R.id.submessage);
         pubButton=(Button)findViewById(R.id.pubButton);
-
         clearButton=(Button)findViewById(R.id.clearButton);
         pubButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
             }else if(msg.what==FAIL){
                 Toast.makeText(MainActivity.this,"连接失败",Toast.LENGTH_SHORT).show();
             }else if(msg.what==RECEIVE){
-                subMsg.append((String)msg.obj);
+                subMsg.setText((String)msg.obj);
             }
             super.handleMessage(msg);
         }
