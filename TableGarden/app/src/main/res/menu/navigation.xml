@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/favorite"
+        android:id="@+id/state"
         android:icon="@mipmap/ic_launcher"
-        android:title="记账" />
+        android:title="状态" />
     <item
-        android:id="@+id/wallet"
+        android:id="@+id/history"
         android:icon="@mipmap/ic_launcher"
-        android:title="统计" />
+        android:title="历史" />
 
 </menu>

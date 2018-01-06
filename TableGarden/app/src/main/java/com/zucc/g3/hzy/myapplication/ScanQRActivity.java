@@ -50,7 +50,7 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
 
     }
 
-
+    //是否曾经扫过码
     private void chack(){
         List<QRcode> code= DataSupport.findAll(QRcode.class);
         if(code.isEmpty())

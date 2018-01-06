@@ -12,9 +12,9 @@
         android:icon="@drawable/test"
         android:title="备份" />
     <item
-        android:id="@+id/nav_recovery"
+        android:id="@+id/nav_quit"
         android:icon="@drawable/test"
-        android:title="恢复" />
+        android:title="退出" />
 
     <item
         android:id="@+id/nav_about"

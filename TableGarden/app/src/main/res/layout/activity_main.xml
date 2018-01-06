@@ -15,45 +15,38 @@
         <android.support.design.widget.AppBarLayout
             android:id="@+id/AppBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="#00FFFFFF"
+            android:layout_height="60dp"
+            android:background="#00FFFF"
             app:elevation="0dp">
-            <android.support.v7.widget.Toolbar
+            <include
                 android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="#00FFFFFF"
-                />
+                layout="@layout/toolbar" />
         </android.support.design.widget.AppBarLayout>
-        <Switch
-            android:id="@+id/sw_connect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-           />
+
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/pubButton"
             android:text="pub"
-            android:layout_alignParentEnd="true" />
+            android:layout_above="@+id/submessage"
+            android:layout_alignStart="@+id/navigation" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="clear"
             android:id="@+id/clearButton"
-            android:layout_below="@+id/submessage"
+            android:layout_above="@+id/navigation"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="14dp" />
+            android:layout_marginBottom="148dp" />
 
         <TextView
             android:id="@+id/submessage"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_below="@+id/pubButton"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="22dp" />
+            android:layout_above="@+id/clearButton"
+            android:layout_alignParentStart="true" />
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/navigation"

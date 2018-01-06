@@ -1,18 +1,25 @@
 package com.zucc.g3.hzy.myapplication;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -24,12 +31,12 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import org.litepal.crud.DataSupport;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends AppCompatActivity  implements Button.OnClickListener , CompoundButton.OnCheckedChangeListener{
+public class MainActivity extends AppCompatActivity  implements Button.OnClickListener , CompoundButton.OnCheckedChangeListener,NavigationView.OnNavigationItemSelectedListener{
 
     private String HOST="127.0.0.1:1883";
     private final static String USERNAME="";
@@ -51,6 +58,11 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
     private MqttAsyncClient mqttClient;
     private Switch switch_connect;
 
+    private Toolbar toolbar;
+    private BottomNavigationView mBottomNavigationView;
+    private DrawerLayout drawer;
+    private ActionBarDrawerToggle toggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +79,39 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         clearButton=(Button)findViewById(R.id.clearButton);
         pubButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
+        mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
+
+        //抬头的点点点
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //设置导航图标要在setSupportActionBar方法之后
+        setSupportActionBar(toolbar);
+
+        //配置toolbar左边三条杠布局
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        //底部导航监听
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_settings:
+                        Toast.makeText(MainActivity.this, "嘿嘿嘿", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
 
     }
 
@@ -88,6 +133,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
     };
 
 
+
 //滑块滑动
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView.getId()== R.id.sw_connect){
@@ -107,8 +153,6 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
             }
         }
     }
-
-
 
     //异步线程连接订阅mqtt消息
     private void delay_connector() {
@@ -171,7 +215,6 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         }
     };
 
-
     //mqtt事务处理中心
     private void connectBroker(){
         try {
@@ -182,7 +225,6 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
             e.printStackTrace();
         }
     }
-
 
     //配置mqtt长连接
     private MqttConnectOptions getOptions(){
@@ -223,6 +265,62 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         timer.schedule(task, time);//设置两次发送时间间隔
     }
 
+    @Override
+    //抬头的点点点
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    //底部导航监听
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.history:
+                    toolbar.setTitle("历史");
+                    Toast.makeText(MainActivity.this,"历史",Toast.LENGTH_SHORT).show();
+                    return true;
+                case R.id.state:
+                    toolbar.setTitle("状态");
+                    Toast.makeText(MainActivity.this,"状态",Toast.LENGTH_SHORT).show();
+                    return true;
+            }
+            return false;
+        }
+
+    };
+
+    //侧滑菜单点击事件
+    public boolean onNavigationItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.nav_set) {
+            Toast.makeText(MainActivity.this, "备份中", Toast.LENGTH_SHORT).show();
+
+        } else if (id == R.id.nav_backups) {
+            Toast.makeText(MainActivity.this, "备份中....", Toast.LENGTH_SHORT).show();
+
+        } else if (id == R.id.nav_quit) {
+
+            DataSupport.deleteAll(QRcode.class);
+            Intent intent = new Intent(MainActivity.this, ScanQRActivity.class);
+            startActivity(intent);
+            this.finish();
+
+        } else if (id == R.id.nav_about) {
+            Toast.makeText(MainActivity.this, "关于我们", Toast.LENGTH_SHORT).show();
+        } else {
+            //Do nothing
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
     @Override
     public void onClick(View v) {
@@ -248,7 +346,6 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
             {
                 Toast.makeText(MainActivity.this,"亲，命令已经到达，不要频繁发送",Toast.LENGTH_SHORT).show();
             }
-
         }
 
         else if(v==clearButton){
