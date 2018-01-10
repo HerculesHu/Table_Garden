@@ -6,6 +6,9 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -62,6 +65,10 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
     private BottomNavigationView mBottomNavigationView;
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
+    public  Fragment fragment;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +87,11 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         pubButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
+
+        //加载状态fragment
+        fragment =new StateFragment();
+        replaceFragment(fragment);
+
 
         //抬头的点点点
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -122,7 +134,6 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
                 Toast.makeText(MainActivity.this,"连接成功",Toast.LENGTH_SHORT).show();
             }else if(msg.what==LOST){
                 Toast.makeText(MainActivity.this,"连接丢失，进行重连",Toast.LENGTH_SHORT).show();
-
             }else if(msg.what==FAIL){
                 Toast.makeText(MainActivity.this,"连接失败",Toast.LENGTH_SHORT).show();
             }else if(msg.what==RECEIVE){
@@ -132,6 +143,9 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         }
     };
 
+    public void setHandler(Handler handler){
+        this.handler = handler;
+    }
 
 
 //滑块滑动
@@ -215,7 +229,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         }
     };
 
-    //mqtt事务处理中心
+    //mqtt连接
     private void connectBroker(){
         try {
             mqttClient=new MqttAsyncClient("tcp://"+HOST,"ClientID"+Math.random(),new MemoryPersistence());
@@ -282,10 +296,15 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
                 case R.id.history:
                     toolbar.setTitle("历史");
                     Toast.makeText(MainActivity.this,"历史",Toast.LENGTH_SHORT).show();
+                    fragment =new HistoryFragment();
+                    replaceFragment(fragment);
+
                     return true;
                 case R.id.state:
                     toolbar.setTitle("状态");
                     Toast.makeText(MainActivity.this,"状态",Toast.LENGTH_SHORT).show();
+                    fragment =new StateFragment();
+                    replaceFragment(fragment);
                     return true;
             }
             return false;
@@ -347,10 +366,59 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
                 Toast.makeText(MainActivity.this,"亲，命令已经到达，不要频繁发送",Toast.LENGTH_SHORT).show();
             }
         }
-
         else if(v==clearButton){
             subMsg.setText("");
         }
     }
+
+    public void onClick_Event(View view) {
+        switch (view.getId()) {
+            case R.id.H:
+                Toast.makeText(view.getContext(), "H", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.S:
+                if (wait&&swc)
+                {
+                    try {
+                        mqttClient.publish(topic_pub, buildJSON(0, 30, 80, 8, 13).getBytes(), 1, false);
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    } finally {
+                        wait = false;
+                        delay(800);
+                    }
+                }
+                else  if(!swc)
+                {
+                    Toast.makeText(MainActivity.this,"请先连接再发送",Toast.LENGTH_SHORT).show();
+                }
+                else if(!wait)
+                {
+                    Toast.makeText(MainActivity.this,"亲，命令已经到达，不要频繁发送",Toast.LENGTH_SHORT).show();
+                }
+                Toast.makeText(view.getContext(), "S", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+
+    //去除Fragment
+    private void removeFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction =fragmentManager.beginTransaction();
+        transaction.hide(fragment);
+        transaction.remove(fragment);
+        transaction.commit();
+    }
+
+    //加载Fragment
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction =fragmentManager.beginTransaction();
+        transaction.replace(R.id.place_holder,fragment);
+        transaction.commit();
+    }
+
+
 }
 
