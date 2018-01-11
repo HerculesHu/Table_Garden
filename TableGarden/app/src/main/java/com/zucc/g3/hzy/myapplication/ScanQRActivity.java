@@ -101,11 +101,12 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
                     QRcode qrcode=new QRcode();
                     try {
                      qrcode=gson.fromJson(result, QRcode.class);
+                     DataSupport.deleteAll(QRcode.class);
+                     qrcode.save();
                     } catch (JsonParseException e) {
-                      //  Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
                     }
-                    DataSupport.deleteAll(QRcode.class);
-                    qrcode.save();
+
                    // Toast.makeText(this, "解析结果:" + qrcode.getIP()+qrcode.getPubtopic()+qrcode.getSubtopic(), Toast.LENGTH_LONG).show();
                     vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
                     long [] pattern = {100,0,0,0};   // 停止 开启 停止 开启

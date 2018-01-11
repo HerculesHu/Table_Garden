@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class StateFragment extends Fragment {
 
@@ -20,8 +21,17 @@ public class StateFragment extends Fragment {
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
+            if(msg.what==1){
+                Toast.makeText(getActivity(),"连接成功",Toast.LENGTH_LONG).show();
+            }else if(msg.what==2){
+                Toast.makeText(getActivity(),"连接丢失，进行重连",Toast.LENGTH_SHORT).show();
+            }else if(msg.what==3){
+                Toast.makeText(getActivity(),"连接失败",Toast.LENGTH_SHORT).show();
+            }else if(msg.what==4){
+                M.setText((String)msg.obj);
+            }
             super.handleMessage(msg);
-            M.setText((String)msg.obj);
+
         }
     };
     @Override
