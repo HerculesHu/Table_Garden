@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
     private final static int LOST=2;
     private final static int FAIL=3;
     private final static int RECEIVE=4;
+    private final static int MSGSEND=5;
 
 
     private MqttAsyncClient mqttClient;
@@ -134,6 +135,9 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
 
                 Toast.makeText(MainActivity.this,"连接失败",Toast.LENGTH_SHORT).show();
             }else if(msg.what==RECEIVE){
+
+            }
+            else if(msg.what==MSGSEND){
 
             }
             super.handleMessage(msg);
@@ -373,8 +377,11 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
             case R.id.H:
                 if (wait&&swc)
                 {
+
+
                     try {
                         mqttClient.publish(topic_pub, buildJSON(0, 30, 80, 8, 13).getBytes(), 1, false);
+
                     } catch (MqttException e) {
                         e.printStackTrace();
                     } finally {
@@ -397,6 +404,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
                 {
                     try {
                         mqttClient.publish(topic_pub, buildJSON(0, 30, 80, 8, 13).getBytes(), 1, false);
+
                     } catch (MqttException e) {
                         e.printStackTrace();
                     } finally {

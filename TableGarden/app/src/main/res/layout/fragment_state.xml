@@ -27,4 +27,15 @@
     </RelativeLayout>
 
 
+    <TextView
+        android:id="@+id/test2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <com.zucc.g3.hzy.myapplication.view.TimeView
+        android:id="@+id/time_picker"
+        android:layout_width="200dp"
+        android:layout_height="200dp" />
+
+
 </LinearLayout>

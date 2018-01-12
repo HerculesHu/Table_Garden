@@ -95,7 +95,6 @@ public class ScanQRActivity extends AppCompatActivity implements EasyPermissions
                 }
                 if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                     String result = bundle.getString(CodeUtils.RESULT_STRING);
-
                     Gson gson = new Gson();
 //                    {"IP":"123.206.127.199","pubtopic":"hgzxyl1428577","subtopic":"farmbox"}
                     QRcode qrcode=new QRcode();
