@@ -44,12 +44,18 @@ public class StateFragment extends Fragment {
 
         timeView = (TimeView)view. findViewById(R.id.time_picker);
         timeView.setTXT("开灯时间");
+        timeView.setTxtColor("#ff00ff");
+        timeView.setLowerBound(0);
+        timeView.setUpperBound(24);
+        timeView.setTextSize(14);
+        timeView.setInnerColor("#454500");
+        timeView.setValueSetColor("#112300");
 
         timeView.setRockerChangeListener(new TimeView.RockerChangeListener() {
             @Override
             public void report(float value) {
 
-            K.setText("value: "+value);
+            K.setText("value: "+(int)value);
             }
         });
 
@@ -66,18 +72,18 @@ public class StateFragment extends Fragment {
                 Toast.makeText(getActivity(),"连接丢失，进行重连",Toast.LENGTH_SHORT).show();
             }else if(msg.what==FAIL){
                 Toast.makeText(getActivity(),"连接失败",Toast.LENGTH_SHORT).show();
-            }else if(msg.what==RECEIVE){
+            }else if(msg.what==RECEIVE){   //有消息到来时
                 M.setText((String)msg.obj);
                 try {
-                    signal.ParseJson((String)msg.obj);
+                    signal.ParseJson((String)msg.obj);//对消息的处理
+                    msgToView();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                timeView.setOpenTime(signal.openLightTime);
             }
             else if(msg.what==MSGSEND){
-                K.setText("11");
+                //当设置已经被发送
                 timeView.senting();
             }
             super.handleMessage(msg);
@@ -92,7 +98,13 @@ public class StateFragment extends Fragment {
     }
 
 
+    private void msgToView(){
+        int v=signal.openLightTime;
+        String opLight="开灯时间"+v+"点";
+        timeView.setOpenTime(signal.openLightTime);
+        timeView.setTXT(opLight);
 
+    }
 
 
 

@@ -21,6 +21,10 @@ import com.zucc.g3.hzy.myapplication.R;
 
 public class TimeView extends View {
 
+
+    private float viewSize_X;
+    private float viewSize_Y;
+
     //固定摇杆背景圆形的X,Y坐标以及半径
     private float mRockerBg_X;
     private float mRockerBg_Y;
@@ -35,7 +39,7 @@ public class TimeView extends View {
 
 
     private Paint innerPaint;
-    private Paint textPaint;
+    private Paint textPaint,valueSetPaint;
     private ParseUtil parseUtil;
     private int openTime= (Integer.MAX_VALUE);
 
@@ -48,6 +52,9 @@ public class TimeView extends View {
     private int angleResult= (Integer.MAX_VALUE);
     private String txtA="";
     private int textSize=14;
+    private String txtColor="#59a9ff";
+    private String innerColor="#000000";
+    private String valueSetColor="#000000";
 
     public TimeView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -57,14 +64,15 @@ public class TimeView extends View {
         mBmpRockerBg = BitmapFactory.decodeResource(context.getResources(), R.drawable.rocker_bg_gray);
         mBmpRockerBtn = BitmapFactory.decodeResource(context.getResources(), R.drawable.rocker_btn_blc);
 
+        // 调用该方法时可以获取view实际的宽getWidth()和高getHeight()
         getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-
-            // 调用该方法时可以获取view实际的宽getWidth()和高getHeight()
             @Override
             public boolean onPreDraw() {
-                // TODO Auto-generated method stub
+
                 getViewTreeObserver().removeOnPreDrawListener(this);
-                Log.e("RockerView", getWidth() + "/" +  getHeight());
+                Log.e("myView", getWidth() + "/" +  getHeight());
+                viewSize_X=getWidth();
+                viewSize_Y=getHeight();
                 mCenterPoint = new PointF(getWidth() / 2, getHeight() / 2);
                 mRockerBg_X = mCenterPoint.x;
                 mRockerBg_Y = mCenterPoint.y;
@@ -81,14 +89,14 @@ public class TimeView extends View {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // TODO Auto-generated method stub
+
                 while(true){
                     //系统调用onDraw方法刷新画面
                     TimeView.this.postInvalidate();
                     try {
                         Thread.sleep(5);
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
+
                         e.printStackTrace();
                     }
                 }
@@ -98,15 +106,7 @@ public class TimeView extends View {
         init();
     }
 
-    private void init() {
-        innerPaint = new Paint();//画内圆的画笔
-        innerPaint.setAntiAlias(true);
-        innerPaint.setStyle(Paint.Style.FILL);
-        innerPaint.setColor(Color.WHITE);
-        textPaint = new Paint();//画文本的画笔
-        textPaint.setAntiAlias(true);
-        textPaint.setStyle(Paint.Style.FILL);
-    }
+
 
   private void map(float x,float y){//映射
       int angle;
@@ -148,27 +148,60 @@ public class TimeView extends View {
                         (int)(mRockerBtn_X + mRockerBtn_R),
                         (int)(mRockerBtn_Y + mRockerBtn_R)),
                 null);
+        innerPaint.setColor(Color.parseColor(innerColor));
+        valueSetPaint.setColor(Color.parseColor(valueSetColor));
+        valueSetPaint.setTextSize(parseUtil.sp2px(textSize));
+        valueSetPaint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawCircle( mCenterPoint.x,  mCenterPoint.y,parseUtil.dp2px((int)viewSize_X/8), innerPaint);
 
-        if(openTime== (Integer.MAX_VALUE)){
+
+        if(openTime== (Integer.MAX_VALUE))
+        {
             textPaint.setColor(Color.parseColor("#ff0000"));
             textPaint.setTextSize(parseUtil.sp2px(textSize+2));
             textPaint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawCircle( mCenterPoint.x,  mCenterPoint.y, mRockerBg_R/2+parseUtil.dp2px(23), innerPaint);
             canvas.drawText("请连接网络", mCenterPoint.x, mCenterPoint.y, textPaint);
-        }else{
-            textPaint.setColor(getResources().getColor(R.color.cc));
-            textPaint.setTextSize(parseUtil.sp2px(textSize));
-            textPaint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawCircle( mCenterPoint.x,  mCenterPoint.y, mRockerBg_R/2+parseUtil.dp2px(23), innerPaint);
-            canvas.drawText(txtA+openTime, mCenterPoint.x, mCenterPoint.y, textPaint);
+            canvas.drawText("", mCenterPoint.x, mCenterPoint.y, valueSetPaint);
+        }
+        else
+        {
+            if(angleResult< (Integer.MAX_VALUE))
+            {
+                textPaint.setColor(Color.parseColor(txtColor.toString()));
+                textPaint.setTextSize(parseUtil.sp2px(textSize));
+                textPaint.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText(txtA, mCenterPoint.x, mCenterPoint.y+parseUtil.dp2px((int)viewSize_Y/40), textPaint);
+                canvas.drawText("设置为"+angleResult, mCenterPoint.x, mCenterPoint.y-parseUtil.dp2px((int)viewSize_Y/30), valueSetPaint);
+            }
+            else
+            {
+                textPaint.setColor(Color.parseColor(txtColor.toString()));
+                textPaint.setTextSize(parseUtil.sp2px(textSize)+4);
+                textPaint.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText(txtA, mCenterPoint.x, mCenterPoint.y, textPaint);
+                canvas.drawText("", mCenterPoint.x, mCenterPoint.y, valueSetPaint);
+            }
         }
 
+    }
 
+    private void init() {
+        innerPaint = new Paint();//画内圆的画笔
+        innerPaint.setAntiAlias(true);
+        innerPaint.setStyle(Paint.Style.FILL);
+
+        textPaint = new Paint();//画文本的画笔
+        textPaint.setAntiAlias(true);
+        textPaint.setStyle(Paint.Style.FILL);
+
+        valueSetPaint = new Paint();//画文本的画笔
+        valueSetPaint.setAntiAlias(true);
+        valueSetPaint.setStyle(Paint.Style.FILL);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // TODO Auto-generated method stub
+
         if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
             // 当触屏区域不在活动范围内
             if (Math.sqrt(Math.pow((mRockerBg_X - (int) event.getX()), 2) + Math.pow((mRockerBg_Y - (int) event.getY()), 2)) >= mRockerBg_R) {
@@ -189,7 +222,6 @@ public class TimeView extends View {
         }
         else if (event.getAction() == MotionEvent.ACTION_UP)
         {
-
             if(mRockerChangeListener != null) {
             }
         }
@@ -224,10 +256,13 @@ public class TimeView extends View {
         mRockerBtn_Y = (float) (R * Math.sin(rad)) + centerY;
     }
 
+
+
+
+
     public void setOpenTime(int openTime) {
         this.openTime = openTime;
     }
-
     public void setLowerBound(int lowerBound) {
         this.lowerBound = lowerBound;
     }
@@ -240,6 +275,19 @@ public class TimeView extends View {
     public void setTextSize(int textSize) {
         this.textSize = textSize;
     }
+    public void setTxtColor(String color){
+        this.txtColor=color;
+    }
+    public void setInnerColor(String color){
+        this.innerColor=color;
+    }
+    public void setValueSetColor(String color){
+        this.valueSetColor=color;
+    }
+
+
+
+
     public void senting(){//发送完毕
         mRockerBtn_X = mCenterPoint.x;
         mRockerBtn_Y = mCenterPoint.y;

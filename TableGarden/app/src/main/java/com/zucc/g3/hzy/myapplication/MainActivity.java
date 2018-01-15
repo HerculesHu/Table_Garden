@@ -217,7 +217,6 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
             //消息到达
-//            subMsg.append(new String(message.getPayload())+"\n"); //不能直接修改,需要在UI线程中操作
             Message msg=new Message();
             msg.what=RECEIVE;
             msg.obj=new String(message.getPayload())+"\n";
@@ -227,6 +226,9 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         @Override
         public void deliveryComplete(IMqttDeliveryToken token) {
             //消息发送完成
+            Message msg=new Message();
+            msg.what=MSGSEND;
+            handler.sendMessage(msg);
         }
     };
 
@@ -345,31 +347,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
     @Override
     public void onClick(View v) {
 
-//        if(v==pubButton)
-//        {
-//            if (wait&&swc)
-//            {
-//                try {
-//                    mqttClient.publish(topic_pub, buildJSON(0, 30, 80, 8, 13).getBytes(), 1, false);
-//                } catch (MqttException e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    wait = false;
-//                    delay(800);
-//                }
-//            }
-//            else  if(!swc)
-//            {
-//                Toast.makeText(MainActivity.this,"请先连接再发送",Toast.LENGTH_SHORT).show();
-//            }
-//            else if(!wait)
-//            {
-//                Toast.makeText(MainActivity.this,"亲，命令已经到达，不要频繁发送",Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//        else if(v==clearButton){
-//            subMsg.setText("");
-//        }
+
     }
 
     public void onClick_Event(View view) {
@@ -377,9 +355,8 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
             case R.id.H:
                 if (wait&&swc)
                 {
-
-
                     try {
+
                         mqttClient.publish(topic_pub, buildJSON(0, 30, 80, 8, 13).getBytes(), 1, false);
 
                     } catch (MqttException e) {

@@ -17,6 +17,7 @@
             android:layout_alignParentTop="true"
             android:onClick="onClick_Event"
             android:text="S" />
+
         <TextView
             android:id="@+id/ST"
             android:layout_width="match_parent"
@@ -34,7 +35,7 @@
 
     <com.zucc.g3.hzy.myapplication.view.TimeView
         android:id="@+id/time_picker"
-        android:layout_width="200dp"
+        android:layout_width="198dp"
         android:layout_height="200dp" />
 
 
