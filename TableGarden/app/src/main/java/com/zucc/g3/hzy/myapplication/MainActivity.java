@@ -23,6 +23,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.zucc.g3.hzy.myapplication.Unit.SignalBack;
+
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -257,7 +260,14 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         return options;
     }
 
-    private String buildJSON(int SHH,int ST,int SH,int opLT,int LtDl){
+    private String buildJSON(){
+        SignalBack sb=     SignalBack.newInstance();//获得这个单例资源
+        int SHH=  sb.getSHH();
+        int SH=sb.getSH();
+        int ST=sb.getST();
+        int opLT=sb.getOpLT();
+        int LtDl=sb.getLtDl();
+
         JSONObject obj = new JSONObject();
         try {
             obj.put("SHH", SHH);
@@ -357,7 +367,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
                 {
                     try {
 
-                        mqttClient.publish(topic_pub, buildJSON(0, 30, 80, 8, 13).getBytes(), 1, false);
+                        mqttClient.publish(topic_pub, buildJSON().getBytes(), 1, false);
 
                     } catch (MqttException e) {
                         e.printStackTrace();
@@ -380,7 +390,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
                 if (wait&&swc)
                 {
                     try {
-                        mqttClient.publish(topic_pub, buildJSON(0, 30, 80, 8, 13).getBytes(), 1, false);
+                        mqttClient.publish(topic_pub, buildJSON().getBytes(), 1, false);
 
                     } catch (MqttException e) {
                         e.printStackTrace();

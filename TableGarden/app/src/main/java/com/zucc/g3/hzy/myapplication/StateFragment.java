@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zucc.g3.hzy.myapplication.Unit.Signal;
+import com.zucc.g3.hzy.myapplication.Unit.SignalBack;
 import com.zucc.g3.hzy.myapplication.view.TimeView;
 
 import org.json.JSONException;
@@ -31,6 +32,7 @@ public class StateFragment extends Fragment {
     private TextView M,K;
     private MainActivity main_activity;
     private Signal signal;
+    private int[] lock = new int[5];
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,6 +40,9 @@ public class StateFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_state, container, false);
 
         signal=new Signal();
+        for (int i=0;i<5;i++){
+            lock[i]=(Integer.MAX_VALUE);
+        }
 
          M=(TextView)view.findViewById(R.id.ST);
         K=(TextView)view.findViewById(R.id.test2);
@@ -54,8 +59,8 @@ public class StateFragment extends Fragment {
         timeView.setRockerChangeListener(new TimeView.RockerChangeListener() {
             @Override
             public void report(float value) {
-
-            K.setText("value: "+(int)value);
+                lock[0]=(int)value;
+            K.setText("value: "+lock[0]);
             }
         });
 
@@ -85,6 +90,9 @@ public class StateFragment extends Fragment {
             else if(msg.what==MSGSEND){
                 //当设置已经被发送
                 timeView.senting();
+                for (int i=0;i<5;i++){
+                    lock[i]=(Integer.MAX_VALUE);
+                }
             }
             super.handleMessage(msg);
         }
@@ -103,7 +111,19 @@ public class StateFragment extends Fragment {
         String opLight="开灯时间"+v+"点";
         timeView.setOpenTime(signal.openLightTime);
         timeView.setTXT(opLight);
+        SignalBack ss=     SignalBack.newInstance();
 
+
+        if(lock[0]!=(Integer.MAX_VALUE)){
+            ss.setOPLT(lock[0]);
+        }
+        else{
+            ss.setOPLT(signal.openLightTime);
+        }
+        ss.setLtDl(signal.lightDelay);
+        ss.setSH(signal.setHumidity);
+        ss.setSHH(signal.setSoilHumidity);
+        ss.setST(signal.setTemperature);
     }
 
 
