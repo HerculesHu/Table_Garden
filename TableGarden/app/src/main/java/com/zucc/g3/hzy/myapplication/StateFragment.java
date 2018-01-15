@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,16 +45,16 @@ public class StateFragment extends Fragment {
             lock[i]=(Integer.MAX_VALUE);
         }
 
-         M=(TextView)view.findViewById(R.id.ST);
+        M=(TextView)view.findViewById(R.id.ST);
         K=(TextView)view.findViewById(R.id.test2);
 
         timeView = (TimeView)view. findViewById(R.id.time_picker);
         timeDelayView=(TimeView)view. findViewById(R.id.time_delay_picker);
 
-        timeDelayView.setTXT("开灯时间");
+        timeDelayView.setTXT("光照时长");
         timeDelayView.setTxtColor("#ff00ff");
         timeDelayView.setLowerBound(0);
-        timeDelayView.setUpperBound(24);
+        timeDelayView.setUpperBound(25);
         timeDelayView.setTextSize(18);
         timeDelayView.setInnerColor("#454500");
         timeDelayView.setValueSetColor("#112300");
@@ -136,7 +137,6 @@ public class StateFragment extends Fragment {
 
         SignalBack ss=  SignalBack.newInstance();
 
-
         if(lock[0]!=(Integer.MAX_VALUE)){
             ss.setOPLT(lock[0]);
         }
@@ -155,10 +155,15 @@ public class StateFragment extends Fragment {
         ss.setST(signal.setTemperature);
     }
 
-
-    private void initializeView(){
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("HistoryFragment", "onDestroyView");
     }
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("HistoryFragment", "onDestroy");
+    }
 
 }

@@ -68,7 +68,9 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
     private BottomNavigationView mBottomNavigationView;
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
-    public  Fragment fragment;
+
+    public  Fragment Histfragment;
+    public  Fragment Statefragment;
 
 
 
@@ -81,30 +83,23 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         topic_pub=bundle.getString("Pubtopic");
         topic_sub=bundle.getString("Subtopic");
         HOST=bundle.getString("IP");
-
+        Histfragment=new HistoryFragment();
+        Statefragment=new StateFragment();
         switch_connect = (Switch) findViewById(R.id.sw_connect);
         switch_connect.setOnCheckedChangeListener(this);
-
-
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
-
         //加载状态fragment
-        fragment =new StateFragment();
-        replaceFragment(fragment);
-
-
+        replaceFragment(Statefragment);
         //抬头的点点点
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //设置导航图标要在setSupportActionBar方法之后
         setSupportActionBar(toolbar);
-
         //配置toolbar左边三条杠布局
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         //底部导航监听
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -118,7 +113,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_settings:
-                        Toast.makeText(MainActivity.this, "嘿嘿嘿", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "待开发", Toast.LENGTH_SHORT).show();
                         break;
                 }
                 return true;
@@ -270,7 +265,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
 
         JSONObject obj = new JSONObject();
         try {
-            obj.put("SHH", SHH);
+            obj.put("SSH", SHH);
             obj.put("ST", ST);
             obj.put("SH", SH);
             obj.put("opLt", opLT);
@@ -307,17 +302,14 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.history:
-                    toolbar.setTitle("历史");
-                    Toast.makeText(MainActivity.this,"历史",Toast.LENGTH_SHORT).show();
-                    fragment =new HistoryFragment();
-                    replaceFragment(fragment);
-
+                    toolbar.setTitle("环境");
+                    Toast.makeText(MainActivity.this,"环境",Toast.LENGTH_SHORT).show();
+                    replaceFragment(Histfragment);
                     return true;
                 case R.id.state:
-                    toolbar.setTitle("状态");
-                    Toast.makeText(MainActivity.this,"状态",Toast.LENGTH_SHORT).show();
-                    fragment =new StateFragment();
-                    replaceFragment(fragment);
+                    toolbar.setTitle("操作");
+                    Toast.makeText(MainActivity.this,"操作",Toast.LENGTH_SHORT).show();
+                    replaceFragment(Statefragment);
                     return true;
             }
             return false;
@@ -331,10 +323,10 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         int id = item.getItemId();
 
         if (id == R.id.nav_set) {
-            Toast.makeText(MainActivity.this, "备份中", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "设置待开发", Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_backups) {
-            Toast.makeText(MainActivity.this, "备份中....", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "待开发", Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_quit) {
 
@@ -384,7 +376,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
                 {
                     Toast.makeText(MainActivity.this,"亲，命令已经到达，不要频繁发送",Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(view.getContext(), "H", Toast.LENGTH_SHORT).show();
+
                 break;
             case R.id.S:
                 if (wait&&swc)
@@ -407,7 +399,7 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
                 {
                     Toast.makeText(MainActivity.this,"亲，命令已经到达，不要频繁发送",Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(view.getContext(), "S", Toast.LENGTH_SHORT).show();
+
                 break;
         }
     }
@@ -429,7 +421,6 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
         transaction.replace(R.id.place_holder,fragment);
         transaction.commit();
     }
-
 
 }
 
