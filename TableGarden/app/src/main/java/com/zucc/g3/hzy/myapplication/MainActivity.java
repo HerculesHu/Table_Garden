@@ -353,34 +353,9 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
     }
 
     public void onClick_Event(View view) {
-        switch (view.getId()) {
-            case R.id.H:
-                if (wait&&swc)
-                {
-                    try {
-
-                        mqttClient.publish(topic_pub, buildJSON().getBytes(), 1, false);
-
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    } finally {
-                        wait = false;
-                        delay(800);
-                    }
-                }
-                else  if(!swc)
-                {
-                    Toast.makeText(MainActivity.this,"请先连接再发送",Toast.LENGTH_SHORT).show();
-                }
-                else if(!wait)
-                {
-                    Toast.makeText(MainActivity.this,"亲，命令已经到达，不要频繁发送",Toast.LENGTH_SHORT).show();
-                }
-
-                break;
-            case R.id.S:
-                if (wait&&swc)
-                {
+        if (wait&&swc) {
+            switch (view.getId()) {
+                case R.id.H:
                     try {
                         mqttClient.publish(topic_pub, buildJSON().getBytes(), 1, false);
 
@@ -390,17 +365,81 @@ public class MainActivity extends AppCompatActivity  implements Button.OnClickLi
                         wait = false;
                         delay(800);
                     }
-                }
-                else  if(!swc)
-                {
-                    Toast.makeText(MainActivity.this,"请先连接再发送",Toast.LENGTH_SHORT).show();
-                }
-                else if(!wait)
-                {
-                    Toast.makeText(MainActivity.this,"亲，命令已经到达，不要频繁发送",Toast.LENGTH_SHORT).show();
-                }
+                    break;
+                case R.id.en_water:
+                    try {
+                        SignalBack sb=     SignalBack.newInstance();//获得这个单例资源
+                        sb.setSHH(0);
+                        mqttClient.publish(topic_pub, buildJSON().getBytes(), 1, false);
 
-                break;
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    } finally {
+                        wait = false;
+                        delay(800);
+                    }
+                    break;
+                case R.id.watering:
+                    try {
+                        SignalBack sb=     SignalBack.newInstance();//获得这个单例资源
+                        sb.setSHH(100);
+                        mqttClient.publish(topic_pub, buildJSON().getBytes(), 1, false);
+
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    } finally {
+                        wait = false;
+                        delay(800);
+                    }
+                    break;
+                case R.id.open_light:
+                    try {
+                        SignalBack sb=     SignalBack.newInstance();//获得这个单例资源
+                        sb.setLtDl(25);
+                        sb.setOPLT(8);
+                        mqttClient.publish(topic_pub, buildJSON().getBytes(), 1, false);
+
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    } finally {
+                        wait = false;
+                        delay(800);
+                    }
+                    break;
+                case R.id.close_light:
+                    try {
+                        SignalBack sb=     SignalBack.newInstance();//获得这个单例资源
+                        sb.setLtDl(0);
+                        sb.setOPLT(8);
+                        mqttClient.publish(topic_pub, buildJSON().getBytes(), 1, false);
+
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    } finally {
+                        wait = false;
+                        delay(800);
+                    }
+                    break;
+                case R.id.S:
+                    try {
+                        mqttClient.publish(topic_pub, buildJSON().getBytes(), 1, false);
+
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    } finally {
+                        wait = false;
+                        delay(800);
+                    }
+                    break;
+            }
+        }
+        else  if(!swc)
+        {
+            Toast.makeText(MainActivity.this,"请先连接再发送",Toast.LENGTH_SHORT).show();
+        }
+        else if(!wait)
+        {
+            Toast.makeText(MainActivity.this,"亲，命令已经到达，不要频繁发送",Toast.LENGTH_SHORT).show();
         }
     }
 

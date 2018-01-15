@@ -30,7 +30,7 @@ public class HistoryFragment extends Fragment {
     private final static int RECEIVE=4;
     private final static int MSGSEND=5;
 
-    private TextView M;
+
     private MainActivity main_activity;
     private TimeView temView,humView,soilHumView;//自定义组件
 
@@ -49,7 +49,7 @@ public class HistoryFragment extends Fragment {
             }else if(msg.what==FAIL){
                 Toast.makeText(getActivity(),"连接失败",Toast.LENGTH_SHORT).show();
             }else if(msg.what==RECEIVE){
-                M.setText((String)msg.obj);
+
                 try {
                     signal.ParseJson((String)msg.obj);//对消息的处理
                     msgToView();
@@ -58,6 +58,7 @@ public class HistoryFragment extends Fragment {
                 }
             }
             else if(msg.what==MSGSEND){
+                Toast.makeText(getActivity(),"发送成功！",Toast.LENGTH_SHORT).show();
                 //当设置已经被发送
                 temView.senting();
                 humView.senting();
@@ -76,37 +77,34 @@ public class HistoryFragment extends Fragment {
         for (int i=0;i<5;i++){
             lock[i]=(Integer.MAX_VALUE);
         }
-        M=(TextView)view.findViewById(R.id.HT);
-
         temView = (TimeView)view. findViewById(R.id.temperature_picker);
         humView=(TimeView)view. findViewById(R.id.humidity_picker);
         soilHumView=(TimeView)view. findViewById(R.id.soilhumidity_picker);
 
 
         temView.setTXT("实时温度");
-        temView.setTxtColor("#ff00ff");
+        temView.setTxtColor("#0099cc");
         temView.setLowerBound(-10);
         temView.setUpperBound(40);
         temView.setTextSize(18);
-        temView.setInnerColor("#454500");
-        temView.setValueSetColor("#112300");
+        temView.setInnerColor("#cccc66");
+        temView.setValueSetColor("#666699");
 
         humView.setTXT("实时湿度");
-        humView.setTxtColor("#ff00ff");
+        humView.setTxtColor("#003300");
         humView.setLowerBound(0);
         humView.setUpperBound(101);
         humView.setTextSize(16);
-        humView.setInnerColor("#454500");
-        humView.setValueSetColor("#112300");
+        humView.setInnerColor("#339999");
+        humView.setValueSetColor("#336600");
 
         soilHumView.setTXT("土壤湿度");
-        soilHumView.setTxtColor("#ff00ff");
+        soilHumView.setTxtColor("#663333");
         soilHumView.setLowerBound(0);
         soilHumView.setUpperBound(30);
         soilHumView.setTextSize(14);
-        soilHumView.setInnerColor("#454500");
-        soilHumView.setValueSetColor("#112300");
-
+        soilHumView.setInnerColor("#cccc33");
+        soilHumView.setValueSetColor("#003366");
 
         temView.setRockerChangeListener(new TimeView.RockerChangeListener() {
             @Override
@@ -114,7 +112,6 @@ public class HistoryFragment extends Fragment {
                 lock[2]=(int)value;
             }
         });
-
 
         humView.setRockerChangeListener(new TimeView.RockerChangeListener() {
             @Override

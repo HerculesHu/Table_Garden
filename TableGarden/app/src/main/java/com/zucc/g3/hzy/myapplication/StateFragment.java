@@ -30,7 +30,6 @@ public class StateFragment extends Fragment {
     private final static int MSGSEND=5;
 
     private TimeView timeView,timeDelayView;//自定义组件
-    private TextView M,K;
     private MainActivity main_activity;
     private Signal signal;
     private int[] lock = new int[5];
@@ -45,28 +44,26 @@ public class StateFragment extends Fragment {
             lock[i]=(Integer.MAX_VALUE);
         }
 
-        M=(TextView)view.findViewById(R.id.ST);
-        K=(TextView)view.findViewById(R.id.test2);
 
         timeView = (TimeView)view. findViewById(R.id.time_picker);
         timeDelayView=(TimeView)view. findViewById(R.id.time_delay_picker);
 
         timeDelayView.setTXT("光照时长");
-        timeDelayView.setTxtColor("#ff00ff");
+        timeDelayView.setTxtColor("#669999");
         timeDelayView.setLowerBound(0);
         timeDelayView.setUpperBound(25);
         timeDelayView.setTextSize(18);
-        timeDelayView.setInnerColor("#454500");
-        timeDelayView.setValueSetColor("#112300");
+        timeDelayView.setInnerColor("#CCFFCC");
+        timeDelayView.setValueSetColor("#996699");
 
 
         timeView.setTXT("开灯时间");
-        timeView.setTxtColor("#ff00ff");
+        timeView.setTxtColor("#99CC33");
         timeView.setLowerBound(0);
         timeView.setUpperBound(24);
         timeView.setTextSize(14);
-        timeView.setInnerColor("#454500");
-        timeView.setValueSetColor("#112300");
+        timeView.setInnerColor("#3399CC");
+        timeView.setValueSetColor("#ffcccc");
 
         timeView.setRockerChangeListener(new TimeView.RockerChangeListener() {
             @Override
@@ -79,7 +76,6 @@ public class StateFragment extends Fragment {
             @Override
             public void report(float value) {
                 lock[1]=(int)value;
-                K.setText("value: "+lock[1]);
             }
         });
 
@@ -97,7 +93,6 @@ public class StateFragment extends Fragment {
             }else if(msg.what==FAIL){
                 Toast.makeText(getActivity(),"连接失败",Toast.LENGTH_SHORT).show();
             }else if(msg.what==RECEIVE){   //有消息到来时
-                M.setText((String)msg.obj);
                 try {
                     signal.ParseJson((String)msg.obj);//对消息的处理
                     msgToView();

@@ -5,10 +5,10 @@
     <item
         android:id="@+id/state"
         android:icon="@mipmap/ic_launcher"
-        android:title="状态" />
+        android:title="操作" />
     <item
         android:id="@+id/history"
         android:icon="@mipmap/ic_launcher"
-        android:title="历史" />
+        android:title="环境" />
 
 </menu>

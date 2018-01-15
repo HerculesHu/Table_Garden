@@ -3,46 +3,109 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/fragstate">
+    android:id="@+id/fragstate"
+    android:background="@drawable/bg">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="90dp">
+
 
         <Button
+            android:background="@drawable/bt_shape_1"
             android:id="@+id/S"
-            android:layout_width="60dp"
+            android:layout_width="200dp"
             android:layout_height="60dp"
-            android:layout_alignParentTop="true"
             android:onClick="onClick_Event"
-            android:text="S" />
+            android:text="发送"
+            android:textSize="25sp"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true" />
 
-        <TextView
-            android:id="@+id/ST"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignBottom="@+id/S"
-            android:layout_toEndOf="@+id/S" />
 
     </RelativeLayout>
 
-
-    <TextView
-        android:id="@+id/test2"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="509dp">
 
-    <com.zucc.g3.hzy.myapplication.view.TimeView
-        android:id="@+id/time_picker"
-        android:layout_width="159dp"
-        android:layout_height="163dp" />
+        <Button
+            android:id="@+id/open_light"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/bt_shape_2"
+            android:onClick="onClick_Event"
+            android:text="开灯"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/close_light"
+            android:layout_marginTop="25dp" />
 
-    <com.zucc.g3.hzy.myapplication.view.TimeView
-        android:id="@+id/time_delay_picker"
-        android:layout_marginLeft="150dp"
-        android:layout_width="198dp"
-        android:layout_height="200dp" />
+        <Button
+            android:id="@+id/close_light"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+
+            android:background="@drawable/bt_shape_2"
+            android:onClick="onClick_Event"
+            android:text="关灯"
+            android:layout_above="@+id/linearLayout3"
+            android:layout_toEndOf="@+id/linearLayout6" />
+
+        <Button
+            android:id="@+id/watering"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+
+            android:background="@drawable/bt_shape_3"
+            android:onClick="onClick_Event"
+            android:text="浇水"
+            android:layout_alignTop="@+id/linearLayout6"
+            android:layout_alignStart="@+id/en_water" />
+
+        <Button
+            android:id="@+id/en_water"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/bt_shape_3"
+
+            android:onClick="onClick_Event"
+            android:text="停止浇水"
+            android:layout_alignBottom="@+id/linearLayout6"
+            android:layout_alignEnd="@+id/linearLayout3"
+            android:layout_marginEnd="10dp" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="27dp"
+            android:layout_alignTop="@+id/open_light"
+            android:layout_alignParentStart="true">
+
+            <com.zucc.g3.hzy.myapplication.view.TimeView
+                android:id="@+id/time_picker"
+                android:layout_width="159dp"
+                android:layout_height="163dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="53dp">
+
+
+            <com.zucc.g3.hzy.myapplication.view.TimeView
+                android:id="@+id/time_delay_picker"
+                android:layout_width="198dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="150dp" />
+        </LinearLayout>
+
+    </RelativeLayout>
 
 
 </LinearLayout>
