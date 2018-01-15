@@ -35,6 +35,12 @@
 
     <com.zucc.g3.hzy.myapplication.view.TimeView
         android:id="@+id/time_picker"
+        android:layout_width="159dp"
+        android:layout_height="163dp" />
+
+    <com.zucc.g3.hzy.myapplication.view.TimeView
+        android:id="@+id/time_delay_picker"
+        android:layout_marginLeft="150dp"
         android:layout_width="198dp"
         android:layout_height="200dp" />
 

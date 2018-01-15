@@ -28,7 +28,7 @@ public class StateFragment extends Fragment {
     private final static int RECEIVE=4;
     private final static int MSGSEND=5;
 
-    private TimeView timeView;//时间选择器
+    private TimeView timeView,timeDelayView;//自定义组件
     private TextView M,K;
     private MainActivity main_activity;
     private Signal signal;
@@ -48,6 +48,17 @@ public class StateFragment extends Fragment {
         K=(TextView)view.findViewById(R.id.test2);
 
         timeView = (TimeView)view. findViewById(R.id.time_picker);
+        timeDelayView=(TimeView)view. findViewById(R.id.time_delay_picker);
+
+        timeDelayView.setTXT("开灯时间");
+        timeDelayView.setTxtColor("#ff00ff");
+        timeDelayView.setLowerBound(0);
+        timeDelayView.setUpperBound(24);
+        timeDelayView.setTextSize(18);
+        timeDelayView.setInnerColor("#454500");
+        timeDelayView.setValueSetColor("#112300");
+
+
         timeView.setTXT("开灯时间");
         timeView.setTxtColor("#ff00ff");
         timeView.setLowerBound(0);
@@ -60,7 +71,14 @@ public class StateFragment extends Fragment {
             @Override
             public void report(float value) {
                 lock[0]=(int)value;
-            K.setText("value: "+lock[0]);
+            }
+        });
+
+        timeDelayView.setRockerChangeListener(new TimeView.RockerChangeListener() {
+            @Override
+            public void report(float value) {
+                lock[1]=(int)value;
+                K.setText("value: "+lock[1]);
             }
         });
 
@@ -90,6 +108,7 @@ public class StateFragment extends Fragment {
             else if(msg.what==MSGSEND){
                 //当设置已经被发送
                 timeView.senting();
+                timeDelayView.senting();
                 for (int i=0;i<5;i++){
                     lock[i]=(Integer.MAX_VALUE);
                 }
@@ -107,11 +126,15 @@ public class StateFragment extends Fragment {
 
 
     private void msgToView(){
-        int v=signal.openLightTime;
-        String opLight="开灯时间"+v+"点";
+        String opLight="开灯时间"+signal.openLightTime+"点";
         timeView.setOpenTime(signal.openLightTime);
         timeView.setTXT(opLight);
-        SignalBack ss=     SignalBack.newInstance();
+
+        String ligthDelay="光照时长"+signal.lightDelay+"h";
+        timeDelayView.setOpenTime(signal.lightDelay);
+        timeDelayView.setTXT(ligthDelay);
+
+        SignalBack ss=  SignalBack.newInstance();
 
 
         if(lock[0]!=(Integer.MAX_VALUE)){
@@ -120,12 +143,22 @@ public class StateFragment extends Fragment {
         else{
             ss.setOPLT(signal.openLightTime);
         }
-        ss.setLtDl(signal.lightDelay);
+
+        if(lock[1]!=(Integer.MAX_VALUE)){
+            ss.setLtDl(lock[1]);
+        }
+        else{
+            ss.setLtDl(signal.lightDelay);
+        }
         ss.setSH(signal.setHumidity);
         ss.setSHH(signal.setSoilHumidity);
         ss.setST(signal.setTemperature);
     }
 
+
+    private void initializeView(){
+
+    }
 
 
 }
