@@ -103,6 +103,7 @@ public class StateFragment extends Fragment {
             }
             else if(msg.what==MSGSEND){
                 //当设置已经被发送
+                Toast.makeText(getActivity(),"发送成功！",Toast.LENGTH_SHORT).show();
                 timeView.senting();
                 timeDelayView.senting();
                 for (int i=0;i<5;i++){
