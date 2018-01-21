@@ -16,6 +16,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import hzy.ubilabs.com.myapplication.R;
 import hzy.ubilabs.com.myapplication.BluetoothService;
@@ -32,7 +33,6 @@ public class CharacteristicListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mBluetoothService = ((OperationActivity) getActivity()).getBluetoothService();
     }
 
@@ -54,25 +54,13 @@ public class CharacteristicListFragment extends Fragment {
                 final List<Integer> propList = new ArrayList<>();
                 List<String> propNameList = new ArrayList<>();
                 int charaProp = characteristic.getProperties();
-                if ((charaProp & BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
-                    propList.add(CharacteristicOperationFragment.PROPERTY_READ);
-                    propNameList.add("Read");
-                }
                 if ((charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
-                    propList.add(CharacteristicOperationFragment.PROPERTY_WRITE);
-                    propNameList.add("Write");
-                }
-                if ((charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) > 0) {
-                    propList.add(CharacteristicOperationFragment.PROPERTY_WRITE_NO_RESPONSE);
-                    propNameList.add("Write No Response");
+                    propList.add(1);
+
                 }
                 if ((charaProp & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
-                    propList.add(CharacteristicOperationFragment.PROPERTY_NOTIFY);
-                    propNameList.add("Notify");
-                }
-                if ((charaProp & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0) {
-                    propList.add(CharacteristicOperationFragment.PROPERTY_INDICATE);
-                    propNameList.add("Indicate");
+                    propList.add(2);
+
                 }
 
                 if (propList.size() > 1) {
@@ -99,9 +87,8 @@ public class CharacteristicListFragment extends Fragment {
     public void showData() {
         BluetoothGattService service = mBluetoothService.getService();
         mResultAdapter.clear();
-        for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
-            mResultAdapter.addResult(characteristic);
-        }
+        mResultAdapter.addResult((service.getCharacteristics().get(service.getCharacteristics().size()-2)));
+        mResultAdapter.addResult((service.getCharacteristics().get(service.getCharacteristics().size()-1)));
         mResultAdapter.notifyDataSetChanged();
     }
 
@@ -157,42 +144,21 @@ public class CharacteristicListFragment extends Fragment {
 
             BluetoothGattCharacteristic characteristic = characteristicList.get(position);
             String uuid = characteristic.getUuid().toString();
-
             holder.txt_title.setText(String.valueOf("特征" + "（" + position + ")"));
             holder.txt_uuid.setText(uuid);
 
             StringBuilder property = new StringBuilder();
             int charaProp = characteristic.getProperties();
-            if ((charaProp & BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
-                property.append("Read");
-                property.append(" , ");
-            }
+
             if ((charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
                 property.append("Write");
                 property.append(" , ");
             }
-            if ((charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) > 0) {
-                property.append("Write No Response");
-                property.append(" , ");
-            }
+
             if ((charaProp & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
                 property.append("Notify");
                 property.append(" , ");
             }
-            if ((charaProp & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0) {
-                property.append("Indicate");
-                property.append(" , ");
-            }
-            if (property.length() > 1) {
-                property.delete(property.length() - 2, property.length() - 1);
-            }
-            if (property.length() > 0) {
-                holder.txt_type.setText(String.valueOf("特性" + "( " + property.toString() + ")"));
-                holder.img_next.setVisibility(View.VISIBLE);
-            } else {
-                holder.img_next.setVisibility(View.INVISIBLE);
-            }
-
             return convertView;
         }
 

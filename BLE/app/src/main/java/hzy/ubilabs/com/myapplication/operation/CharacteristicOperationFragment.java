@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import hzy.ubilabs.com.myapplication.R;
 import hzy.ubilabs.com.myapplication.BluetoothService;
@@ -25,70 +26,42 @@ import java.util.List;
 
 public class CharacteristicOperationFragment extends Fragment {
 
-    public static final int PROPERTY_READ = 1;
-    public static final int PROPERTY_WRITE = 2;
-    public static final int PROPERTY_WRITE_NO_RESPONSE = 3;
-    public static final int PROPERTY_NOTIFY = 4;
-    public static final int PROPERTY_INDICATE = 5;
-    private String back="";
-
-    private LinearLayout layout_container;
-
-    private List<String> childList = new ArrayList<>();
 
     private BluetoothService mBluetoothService;
+    private TextView backtxt;
+    private Button pubbt;
+    private Button subbt;
+    private EditText eddt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Toast.makeText(getActivity(),"CharacteristicOperationFragment",Toast.LENGTH_SHORT).show();
         mBluetoothService = ((OperationActivity) getActivity()).getBluetoothService();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_characteric_operation, null);
-        initView(v);
+
+        backtxt=(TextView)v.findViewById(R.id.read_read);
+        pubbt=(Button) v.findViewById(R.id.write_write);
+        eddt=(EditText)v.findViewById(R.id.eddttxt);
+        subbt=(Button) v.findViewById(R.id.read_bt_read);
         return v;
     }
 
-    private void initView(View v) {
-        layout_container = (LinearLayout) v.findViewById(R.id.layout_container);
-    }
 
     public void showData() {
         final BluetoothGattCharacteristic characteristic = mBluetoothService.getCharacteristic();
         final int charaProp = mBluetoothService.getCharaProp();
-        String child = characteristic.getUuid().toString() + String.valueOf(charaProp);
-
-        for (int i = 0; i < layout_container.getChildCount(); i++) {
-            layout_container.getChildAt(i).setVisibility(View.GONE);
-        }
-        if (childList.contains(child)) {
-            layout_container.findViewWithTag(characteristic.getUuid().toString()).setVisibility(View.VISIBLE);
-        } else {
-            childList.add(child);
-
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_characteric_operation, null);
-            view.setTag(characteristic.getUuid().toString());
-            LinearLayout layout_add = (LinearLayout) view.findViewById(R.id.layout_add);
-            final TextView txt_title = (TextView) view.findViewById(R.id.txt_title);
-            txt_title.setText(String.valueOf(characteristic.getUuid().toString() + "的数据变化："));
-            final TextView txt = (TextView) view.findViewById(R.id.txt);
-            txt.setMovementMethod(ScrollingMovementMethod.getInstance());
 
             switch (charaProp) {
-
-
-                case PROPERTY_WRITE: {
-                    View view_add = LayoutInflater.from(getActivity()).inflate(R.layout.layout_characteric_operation_et, null);
-                    final EditText et = (EditText) view_add.findViewById(R.id.et);
-                    Button btn = (Button) view_add.findViewById(R.id.btn);
-                    btn.setText("写2");
-                    btn.setOnClickListener(new View.OnClickListener() {
+                case 1: {
+                    pubbt.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            String hex = et.getText().toString();
+                            String hex = eddt.getText().toString();
                             if (TextUtils.isEmpty(hex)) {
                                 return;
                             }
@@ -136,21 +109,16 @@ public class CharacteristicOperationFragment extends Fragment {
                                     });
                         }
                     });
-                    layout_add.addView(view_add);
                 }
                 break;
 
-
-
-                case PROPERTY_NOTIFY: {
-                    View view_add = LayoutInflater.from(getActivity()).inflate(R.layout.layout_characteric_operation_button, null);
-                    final Button btn = (Button) view_add.findViewById(R.id.btn);
-                    btn.setText("打开通知1");
-                    btn.setOnClickListener(new View.OnClickListener() {
+                case 2: {
+                    subbt.setText("打开通知1");
+                    subbt.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (btn.getText().toString().equals("打开通知1")) {
-                                btn.setText("关闭通知1");
+                            if (subbt.getText().toString().equals("打开通知1")) {
+                                subbt.setText("关闭通知1");
                                 mBluetoothService.notify(
                                         characteristic.getService().getUuid().toString(),
                                         characteristic.getUuid().toString(),
@@ -161,19 +129,16 @@ public class CharacteristicOperationFragment extends Fragment {
                                                 getActivity().runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        back=(String.valueOf(HexUtil.encodeHex(characteristic.getValue())));
-                                                            txt.setText(back);
+                                                        backtxt.setText((String.valueOf(HexUtil.encodeHex(characteristic.getValue()))));
                                                     }
                                                 });
                                             }
-
                                             @Override
                                             public void onFailure(final BleException exception) {
                                                 getActivity().runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        back=(exception.toString());
-                                                        txt.setText(back);
+                                                        backtxt.setText((exception.toString()));
                                                     }
                                                 });
                                             }
@@ -181,26 +146,19 @@ public class CharacteristicOperationFragment extends Fragment {
                                             public void onInitiatedResult(boolean result) {
 
                                             }
-
                                         });
                             } else {
-                                btn.setText("打开通知1");
+                                subbt.setText("打开通知1");
                                 mBluetoothService.stopNotify(
                                         characteristic.getService().getUuid().toString(),
                                         characteristic.getUuid().toString());
                             }
                         }
                     });
-                    layout_add.addView(view_add);
                 }
                 break;
-
-
             }
 
-            layout_container.addView(view);
         }
     }
 
-
-}
