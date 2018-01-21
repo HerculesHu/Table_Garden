@@ -28,4 +28,14 @@
         android:scrollbars="vertical"
         android:textSize="13sp" />
 
+    <TextView
+        android:id="@+id/txt2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadeScrollbars="false"
+        android:text="111"
+        android:padding="10dp"
+        android:scrollbars="vertical"
+        android:textSize="13sp" />
+
 </LinearLayout>

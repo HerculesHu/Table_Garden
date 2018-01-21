@@ -30,6 +30,7 @@ public class CharacteristicOperationFragment extends Fragment {
     public static final int PROPERTY_WRITE_NO_RESPONSE = 3;
     public static final int PROPERTY_NOTIFY = 4;
     public static final int PROPERTY_INDICATE = 5;
+    private String back="";
 
     private LinearLayout layout_container;
 
@@ -77,64 +78,13 @@ public class CharacteristicOperationFragment extends Fragment {
             txt.setMovementMethod(ScrollingMovementMethod.getInstance());
 
             switch (charaProp) {
-                case PROPERTY_READ: {
-                    View view_add = LayoutInflater.from(getActivity()).inflate(R.layout.layout_characteric_operation_button, null);
-                    Button btn = (Button) view_add.findViewById(R.id.btn);
-                    btn.setText("读");
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            mBluetoothService.read(
-                                    characteristic.getService().getUuid().toString(),
-                                    characteristic.getUuid().toString(),
-                                    new BleCharacterCallback() {
 
-                                        @Override
-                                        public void onSuccess(final BluetoothGattCharacteristic characteristic) {
-                                            getActivity().runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    txt.append(String.valueOf(HexUtil.encodeHex(characteristic.getValue())));
-                                                    txt.append("\n");
-                                                    int offset = txt.getLineCount() * txt.getLineHeight();
-                                                    if (offset > txt.getHeight()) {
-                                                        txt.scrollTo(0, offset - txt.getHeight());
-                                                    }
-                                                }
-                                            });
-                                        }
-
-                                        @Override
-                                        public void onFailure(final BleException exception) {
-                                            getActivity().runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    txt.append(exception.toString());
-                                                    txt.append("\n");
-                                                    int offset = txt.getLineCount() * txt.getLineHeight();
-                                                    if (offset > txt.getHeight()) {
-                                                        txt.scrollTo(0, offset - txt.getHeight());
-                                                    }
-                                                }
-                                            });
-                                        }
-
-                                        @Override
-                                        public void onInitiatedResult(boolean result) {
-
-                                        }
-                                    });
-                        }
-                    });
-                    layout_add.addView(view_add);
-                }
-                break;
 
                 case PROPERTY_WRITE: {
                     View view_add = LayoutInflater.from(getActivity()).inflate(R.layout.layout_characteric_operation_et, null);
                     final EditText et = (EditText) view_add.findViewById(R.id.et);
                     Button btn = (Button) view_add.findViewById(R.id.btn);
-                    btn.setText("写");
+                    btn.setText("写2");
                     btn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -150,32 +100,32 @@ public class CharacteristicOperationFragment extends Fragment {
 
                                         @Override
                                         public void onSuccess(final BluetoothGattCharacteristic characteristic) {
-                                            getActivity().runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    txt.append(String.valueOf(HexUtil.encodeHex(characteristic.getValue())));
-                                                    txt.append("\n");
-                                                    int offset = txt.getLineCount() * txt.getLineHeight();
-                                                    if (offset > txt.getHeight()) {
-                                                        txt.scrollTo(0, offset - txt.getHeight());
-                                                    }
-                                                }
-                                            });
+//                                            getActivity().runOnUiThread(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+//                                                    txt.append(String.valueOf(HexUtil.encodeHex(characteristic.getValue())));
+//                                                    txt.append("\n");
+//                                                    int offset = txt.getLineCount() * txt.getLineHeight();
+//                                                    if (offset > txt.getHeight()) {
+//                                                        txt.scrollTo(0, offset - txt.getHeight());
+//                                                    }
+//                                                }
+//                                            });
                                         }
 
                                         @Override
                                         public void onFailure(final BleException exception) {
-                                            getActivity().runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    txt.append(exception.toString());
-                                                    txt.append("\n");
-                                                    int offset = txt.getLineCount() * txt.getLineHeight();
-                                                    if (offset > txt.getHeight()) {
-                                                        txt.scrollTo(0, offset - txt.getHeight());
-                                                    }
-                                                }
-                                            });
+//                                            getActivity().runOnUiThread(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+//                                                    txt.append(exception.toString());
+//                                                    txt.append("\n");
+//                                                    int offset = txt.getLineCount() * txt.getLineHeight();
+//                                                    if (offset > txt.getHeight()) {
+//                                                        txt.scrollTo(0, offset - txt.getHeight());
+//                                                    }
+//                                                }
+//                                            });
                                         }
 
                                         @Override
@@ -190,75 +140,17 @@ public class CharacteristicOperationFragment extends Fragment {
                 }
                 break;
 
-                case PROPERTY_WRITE_NO_RESPONSE: {
-                    View view_add = LayoutInflater.from(getActivity()).inflate(R.layout.layout_characteric_operation_et, null);
-                    final EditText et = (EditText) view_add.findViewById(R.id.et);
-                    Button btn = (Button) view_add.findViewById(R.id.btn);
-                    btn.setText("写");
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            String hex = et.getText().toString();
-                            if (TextUtils.isEmpty(hex)) {
-                                return;
-                            }
-                            mBluetoothService.write(
-                                    characteristic.getService().getUuid().toString(),
-                                    characteristic.getUuid().toString(),
-                                    hex,
-                                    new BleCharacterCallback() {
 
-                                        @Override
-                                        public void onSuccess(final BluetoothGattCharacteristic characteristic) {
-                                            getActivity().runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    txt.append(String.valueOf(HexUtil.encodeHex(characteristic.getValue())));
-                                                    txt.append("\n");
-                                                    int offset = txt.getLineCount() * txt.getLineHeight();
-                                                    if (offset > txt.getHeight()) {
-                                                        txt.scrollTo(0, offset - txt.getHeight());
-                                                    }
-                                                }
-                                            });
-                                        }
-
-                                        @Override
-                                        public void onFailure(final BleException exception) {
-                                            getActivity().runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    txt.append(exception.toString());
-                                                    txt.append("\n");
-                                                    int offset = txt.getLineCount() * txt.getLineHeight();
-                                                    if (offset > txt.getHeight()) {
-                                                        txt.scrollTo(0, offset - txt.getHeight());
-                                                    }
-                                                }
-                                            });
-                                        }
-
-                                        @Override
-                                        public void onInitiatedResult(boolean result) {
-
-                                        }
-
-                                    });
-                        }
-                    });
-                    layout_add.addView(view_add);
-                }
-                break;
 
                 case PROPERTY_NOTIFY: {
                     View view_add = LayoutInflater.from(getActivity()).inflate(R.layout.layout_characteric_operation_button, null);
                     final Button btn = (Button) view_add.findViewById(R.id.btn);
-                    btn.setText("打开通知");
+                    btn.setText("打开通知1");
                     btn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (btn.getText().toString().equals("打开通知")) {
-                                btn.setText("关闭通知");
+                            if (btn.getText().toString().equals("打开通知1")) {
+                                btn.setText("关闭通知1");
                                 mBluetoothService.notify(
                                         characteristic.getService().getUuid().toString(),
                                         characteristic.getUuid().toString(),
@@ -269,12 +161,8 @@ public class CharacteristicOperationFragment extends Fragment {
                                                 getActivity().runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        txt.append(String.valueOf(HexUtil.encodeHex(characteristic.getValue())));
-                                                        txt.append("\n");
-                                                        int offset = txt.getLineCount() * txt.getLineHeight();
-                                                        if (offset > txt.getHeight()) {
-                                                            txt.scrollTo(0, offset - txt.getHeight());
-                                                        }
+                                                        back=(String.valueOf(HexUtil.encodeHex(characteristic.getValue())));
+                                                            txt.setText(back);
                                                     }
                                                 });
                                             }
@@ -284,16 +172,11 @@ public class CharacteristicOperationFragment extends Fragment {
                                                 getActivity().runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        txt.append(exception.toString());
-                                                        txt.append("\n");
-                                                        int offset = txt.getLineCount() * txt.getLineHeight();
-                                                        if (offset > txt.getHeight()) {
-                                                            txt.scrollTo(0, offset - txt.getHeight());
-                                                        }
+                                                        back=(exception.toString());
+                                                        txt.setText(back);
                                                     }
                                                 });
                                             }
-
                                             @Override
                                             public void onInitiatedResult(boolean result) {
 
@@ -301,7 +184,7 @@ public class CharacteristicOperationFragment extends Fragment {
 
                                         });
                             } else {
-                                btn.setText("打开通知");
+                                btn.setText("打开通知1");
                                 mBluetoothService.stopNotify(
                                         characteristic.getService().getUuid().toString(),
                                         characteristic.getUuid().toString());
@@ -312,67 +195,7 @@ public class CharacteristicOperationFragment extends Fragment {
                 }
                 break;
 
-                case PROPERTY_INDICATE: {
-                    View view_add = LayoutInflater.from(getActivity()).inflate(R.layout.layout_characteric_operation_button, null);
-                    final Button btn = (Button) view_add.findViewById(R.id.btn);
-                    btn.setText("打开通知");
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (btn.getText().toString().equals("打开通知")) {
-                                btn.setText("关闭通知");
-                                mBluetoothService.indicate(
-                                        characteristic.getService().getUuid().toString(),
-                                        characteristic.getUuid().toString(),
-                                        new BleCharacterCallback() {
 
-                                            @Override
-                                            public void onSuccess(final BluetoothGattCharacteristic characteristic) {
-                                                getActivity().runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        txt.append(String.valueOf(HexUtil.encodeHex(characteristic.getValue())));
-                                                        txt.append("\n");
-                                                        int offset = txt.getLineCount() * txt.getLineHeight();
-                                                        if (offset > txt.getHeight()) {
-                                                            txt.scrollTo(0, offset - txt.getHeight());
-                                                        }
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onFailure(final BleException exception) {
-                                                getActivity().runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        txt.append(exception.toString());
-                                                        txt.append("\n");
-                                                        int offset = txt.getLineCount() * txt.getLineHeight();
-                                                        if (offset > txt.getHeight()) {
-                                                            txt.scrollTo(0, offset - txt.getHeight());
-                                                        }
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onInitiatedResult(boolean result) {
-
-                                            }
-
-                                        });
-                            } else {
-                                btn.setText("打开通知");
-                                mBluetoothService.stopIndicate(
-                                        characteristic.getService().getUuid().toString(),
-                                        characteristic.getUuid().toString());
-                            }
-                        }
-                    });
-                    layout_add.addView(view_add);
-                }
-                break;
             }
 
             layout_container.addView(view);
