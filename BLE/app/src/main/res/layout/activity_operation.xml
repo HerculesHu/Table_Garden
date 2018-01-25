@@ -41,23 +41,7 @@
         android:scrollbars="vertical"
         android:textSize="13sp" />
 
-    <Button
-        android:text="接收"
-        android:id="@+id/okbt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/conn"
-        android:text="1234"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/conn2"
-        android:text="xxxx"
-        android:layout_below="@+id/conn"
         />
 
 </LinearLayout>
