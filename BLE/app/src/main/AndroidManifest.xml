@@ -26,10 +26,10 @@
         </activity>
 
         <activity android:name=".other.UserActivity"/>
-        <activity android:name=".scan.AnyScanActivity" />
-        <activity android:name=".operation.OperationActivity" />
+        <activity android:name=".BLE.fastble.scan.AnyScanActivity" />
+        <activity android:name=".OperationActivity" />
 
-        <service android:name=".BluetoothService" />
+        <service android:name=".BLE.fastble.BluetoothService" />
     </application>
 
 </manifest>
