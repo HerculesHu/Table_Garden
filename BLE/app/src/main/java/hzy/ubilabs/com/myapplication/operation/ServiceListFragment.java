@@ -24,32 +24,20 @@ import java.util.List;
 
 public class ServiceListFragment extends Fragment {
 
-    private Button sebt;
-    private BluetoothService mBluetoothService;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toast.makeText(getActivity(),"ServiceListFragment",Toast.LENGTH_SHORT).show();
-        mBluetoothService = ((OperationActivity) getActivity()).getBluetoothService();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_service_list, null);
-        sebt=(Button)v.findViewById(R.id.sebt);
-        sebt.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(getActivity(),"bt",Toast.LENGTH_SHORT).show();
-                BluetoothGatt gatt = mBluetoothService.getGatt();
-                mBluetoothService.setService(gatt.getServices().get(gatt.getServices().size()-1));
-                ((OperationActivity) getActivity()).changePage(1);
-            }
-        });
-
         return v;
     }
-
 
 
 

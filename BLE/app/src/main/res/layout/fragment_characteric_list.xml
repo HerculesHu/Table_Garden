@@ -3,16 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <ListView
-        android:id="@+id/list_service"
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="300dp">
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="0.5dp"
-        android:paddingEnd="10dp"
-        android:paddingStart="10dp"
-        android:scrollbars="none" />
+        android:id="@+id/conn"
+        android:text="1234"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/conn2"
+        android:text="xxxx"
+        android:layout_below="@+id/conn"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="33dp" />
+
+</RelativeLayout>
+
 
 </LinearLayout>

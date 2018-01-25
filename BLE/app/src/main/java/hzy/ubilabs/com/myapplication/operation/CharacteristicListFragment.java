@@ -1,6 +1,7 @@
 package hzy.ubilabs.com.myapplication.operation;
 
 
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,147 +28,23 @@ import java.util.List;
 
 public class CharacteristicListFragment extends Fragment {
 
-    private ResultAdapter mResultAdapter;
 
-    private BluetoothService mBluetoothService;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBluetoothService = ((OperationActivity) getActivity()).getBluetoothService();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_characteric_list, null);
-        initView(v);
+
         return v;
     }
 
-    private void initView(View v) {
-        mResultAdapter = new ResultAdapter(getActivity());
-        ListView listView_device = (ListView) v.findViewById(R.id.list_service);
-        listView_device.setAdapter(mResultAdapter);
-        listView_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final BluetoothGattCharacteristic characteristic = mResultAdapter.getItem(position);
-                final List<Integer> propList = new ArrayList<>();
-                List<String> propNameList = new ArrayList<>();
-                int charaProp = characteristic.getProperties();
-                if ((charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
-                    propList.add(1);
 
-                }
-                if ((charaProp & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
-                    propList.add(2);
 
-                }
 
-                if (propList.size() > 1) {
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle("选择操作类型")
-                            .setItems(propNameList.toArray(new String[propNameList.size()]), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mBluetoothService.setCharacteristic(characteristic);
-                                    mBluetoothService.setCharaProp(propList.get(which));
-                                    ((OperationActivity) getActivity()).changePage(2);
-                                }
-                            })
-                            .show();
-                } else if (propList.size() > 0) {
-                    mBluetoothService.setCharaProp(propList.get(0));
-                    mBluetoothService.setCharacteristic(characteristic);
-                    ((OperationActivity) getActivity()).changePage(2);
-                }
-            }
-        });
-    }
-
-    public void showData() {
-        BluetoothGattService service = mBluetoothService.getService();
-        mResultAdapter.clear();
-        mResultAdapter.addResult((service.getCharacteristics().get(service.getCharacteristics().size()-2)));
-        mResultAdapter.addResult((service.getCharacteristics().get(service.getCharacteristics().size()-1)));
-        mResultAdapter.notifyDataSetChanged();
-    }
-
-    private class ResultAdapter extends BaseAdapter {
-
-        private Context context;
-        private List<BluetoothGattCharacteristic> characteristicList;
-
-        ResultAdapter(Context context) {
-            this.context = context;
-            characteristicList = new ArrayList<>();
-        }
-
-        public void addResult(BluetoothGattCharacteristic characteristic) {
-            characteristicList.add(characteristic);
-        }
-
-        public void clear() {
-            characteristicList.clear();
-        }
-
-        @Override
-        public int getCount() {
-            return characteristicList.size();
-        }
-
-        @Override
-        public BluetoothGattCharacteristic getItem(int position) {
-            if (position > characteristicList.size())
-                return null;
-            return characteristicList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            if (convertView != null) {
-                holder = (ViewHolder) convertView.getTag();
-            } else {
-                convertView = View.inflate(context, R.layout.adapter_service, null);
-                holder = new ViewHolder();
-                convertView.setTag(holder);
-                holder.txt_title = (TextView) convertView.findViewById(R.id.txt_title);
-                holder.txt_uuid = (TextView) convertView.findViewById(R.id.txt_uuid);
-                holder.txt_type = (TextView) convertView.findViewById(R.id.txt_type);
-                holder.img_next = (ImageView) convertView.findViewById(R.id.img_next);
-            }
-
-            BluetoothGattCharacteristic characteristic = characteristicList.get(position);
-            String uuid = characteristic.getUuid().toString();
-            holder.txt_title.setText(String.valueOf("特征" + "（" + position + ")"));
-            holder.txt_uuid.setText(uuid);
-
-            StringBuilder property = new StringBuilder();
-            int charaProp = characteristic.getProperties();
-
-            if ((charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
-                property.append("Write");
-                property.append(" , ");
-            }
-
-            if ((charaProp & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
-                property.append("Notify");
-                property.append(" , ");
-            }
-            return convertView;
-        }
-
-        class ViewHolder {
-            TextView txt_title;
-            TextView txt_uuid;
-            TextView txt_type;
-            ImageView img_next;
-        }
-    }
 }

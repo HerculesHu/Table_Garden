@@ -3,6 +3,7 @@ package hzy.ubilabs.com.myapplication.operation;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -36,13 +37,14 @@ public class OperationActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private List<Fragment> fragments = new ArrayList<>();
-    private int currentPage = 0;
+
     private String[] titles = new String[]{"服务列表", "特征列表", "操作控制台"};
 
     private BluetoothService mBluetoothService;
     private String back="";
 
     private Button sebt;
+    private Button testw,tests;
     private TextView backtxt;
     private Button pubbt;
     private Button subbt;
@@ -85,7 +87,7 @@ public class OperationActivity extends AppCompatActivity {
 
     private void initPage() {
         prepareFragment();
-        changePage(0);
+
     }
 
     private BluetoothService.Callback2 callback = new BluetoothService.Callback2() {
@@ -103,14 +105,8 @@ public class OperationActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (currentPage != 0) {
-                currentPage--;
-                changePage(currentPage);
-                return true;
-            } else {
                 finish();
                 return true;
-            }
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -120,13 +116,15 @@ public class OperationActivity extends AppCompatActivity {
         backtxt=(TextView)findViewById(R.id.txt_read);
         eddt=(EditText)findViewById(R.id.edt);
         subbt=(Button)findViewById(R.id.okbt);
+        testw=(Button)findViewById(R.id.conn);
+        tests=(Button)findViewById(R.id.conn2);
         pubbt=(Button)findViewById(R.id.write_bt);
         sebt=(Button)findViewById(R.id.sebt);
         sebt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 BluetoothGatt gatt = mBluetoothService.getGatt();
                 mBluetoothService.setService(gatt.getServices().get(gatt.getServices().size()-1));
-               changePage(1);
+
             }
         });
         setSupportActionBar(toolbar);
@@ -134,30 +132,40 @@ public class OperationActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (currentPage != 0) {
-                    currentPage--;
-                    changePage(currentPage);
-                } else {
+
                     finish();
-                }
+
             }
         });
 
+
+        testw.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(OperationActivity.this,"bt",Toast.LENGTH_SHORT).show();
+                BluetoothGattService service = mBluetoothService.getService();
+                mBluetoothService.setCharacteristic((service.getCharacteristics().get(service.getCharacteristics().size()-1)));
+                mBluetoothService.setCharaProp(2);
+                showData();
+
+            }
+        });
+
+        tests.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(OperationActivity.this,"bt2",Toast.LENGTH_SHORT).show();
+                BluetoothGattService service = mBluetoothService.getService();
+                mBluetoothService.setCharacteristic((service.getCharacteristics().get(service.getCharacteristics().size()-2)));
+                mBluetoothService.setCharaProp(1);
+                showData();
+
+            }
+        });
+
+
     }
 
 
 
-    public void changePage(int page) {
-        currentPage = page;
-        toolbar.setTitle(titles[page]);
-        updateFragment(page);
-        if (currentPage == 1) {
-            ((CharacteristicListFragment) fragments.get(1)).showData();
-        } else if (currentPage == 2) {
-            ((CharacteristicOperationFragment) fragments.get(2)).showData();
-            showData();
-        }
-    }
 
     private void prepareFragment() {
         fragments.add(new ServiceListFragment());
@@ -189,21 +197,9 @@ public class OperationActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mBluetoothService != null)
-            mBluetoothService.closeConnect();
-        unbindService();
-    }
-
 
     public void showData() {
         final BluetoothGattCharacteristic characteristic = mBluetoothService.getCharacteristic();
-        final int charaProp = mBluetoothService.getCharaProp();
-
-        switch (charaProp) {
-            case 1: {
                 pubbt.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -255,10 +251,9 @@ public class OperationActivity extends AppCompatActivity {
                                 });
                     }
                 });
-            }
-            break;
 
-            case 2: {
+
+
                 subbt.setText("打开通知1");
                 subbt.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -302,9 +297,14 @@ public class OperationActivity extends AppCompatActivity {
                     }
                 });
             }
-            break;
-        }
 
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mBluetoothService != null)
+            mBluetoothService.closeConnect();
+        unbindService();
     }
-
 }

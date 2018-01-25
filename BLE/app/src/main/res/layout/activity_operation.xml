@@ -36,20 +36,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fadeScrollbars="false"
-        android:text="要写的"
+        android:text="2233"
         android:padding="10dp"
         android:scrollbars="vertical"
         android:textSize="13sp" />
-    <Button
-        android:text="连接"
-        android:id="@+id/sebt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <Button
         android:text="接收"
         android:id="@+id/okbt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/conn"
+        android:text="1234"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/conn2"
+        android:text="xxxx"
+        android:layout_below="@+id/conn"
+        />
+
+    <Button
+        android:id="@+id/sebt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="连接" />
 
 </LinearLayout>
