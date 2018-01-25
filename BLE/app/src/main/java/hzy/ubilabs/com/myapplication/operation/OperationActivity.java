@@ -1,6 +1,7 @@
 package hzy.ubilabs.com.myapplication.operation;
 
 
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -33,17 +34,11 @@ import java.util.List;
 
 public class OperationActivity extends AppCompatActivity {
 
-
-
     private Toolbar toolbar;
-    private List<Fragment> fragments = new ArrayList<>();
-
-    private String[] titles = new String[]{"服务列表", "特征列表", "操作控制台"};
-
     private BluetoothService mBluetoothService;
     private String back="";
 
-    private Button sebt;
+
     private Button testw,tests;
     private TextView backtxt;
     private Button pubbt;
@@ -52,19 +47,59 @@ public class OperationActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_operation);
-        initView();
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        backtxt=(TextView)findViewById(R.id.txt_read);
+        eddt=(EditText)findViewById(R.id.edt);
+        subbt=(Button)findViewById(R.id.okbt);
+        testw=(Button)findViewById(R.id.conn);
+        tests=(Button)findViewById(R.id.conn2);
+        pubbt=(Button)findViewById(R.id.write_bt);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         bindService();
+
+
+        testw.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                getService();
+                Toast.makeText(OperationActivity.this,"bt",Toast.LENGTH_SHORT).show();
+                BluetoothGattService service = mBluetoothService.getService();
+                mBluetoothService.setCharacteristic((service.getCharacteristics().get(service.getCharacteristics().size()-1)));
+                mBluetoothService.setCharaProp(2);
+                showData();
+            }
+        });
+
+        tests.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                getService();
+                Toast.makeText(OperationActivity.this,"bt2",Toast.LENGTH_SHORT).show();
+                BluetoothGattService service = mBluetoothService.getService();
+                mBluetoothService.setCharacteristic((service.getCharacteristics().get(service.getCharacteristics().size()-2)));
+                mBluetoothService.setCharaProp(1);
+                showData();
+            }
+        });
     }
-
-
 
     private void bindService() {
         Intent bindIntent = new Intent(this, BluetoothService.class);
         this.bindService(bindIntent, mFhrSCon, Context.BIND_AUTO_CREATE);
+    }
+
+    public void getService(){
+        BluetoothGatt gatt = mBluetoothService.getGatt();
+        mBluetoothService.setService(gatt.getServices().get(gatt.getServices().size()-1));
     }
 
     private void unbindService() {
@@ -76,7 +111,7 @@ public class OperationActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             mBluetoothService = ((BluetoothService.BluetoothBinder) service).getService();
             mBluetoothService.setConnectCallback(callback);
-            initPage();
+
         }
 
         @Override
@@ -85,10 +120,7 @@ public class OperationActivity extends AppCompatActivity {
         }
     };
 
-    private void initPage() {
-        prepareFragment();
 
-    }
 
     private BluetoothService.Callback2 callback = new BluetoothService.Callback2() {
 
@@ -98,10 +130,6 @@ public class OperationActivity extends AppCompatActivity {
         }
     };
 
-
-
-
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -110,93 +138,6 @@ public class OperationActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
-
-    private void initView() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        backtxt=(TextView)findViewById(R.id.txt_read);
-        eddt=(EditText)findViewById(R.id.edt);
-        subbt=(Button)findViewById(R.id.okbt);
-        testw=(Button)findViewById(R.id.conn);
-        tests=(Button)findViewById(R.id.conn2);
-        pubbt=(Button)findViewById(R.id.write_bt);
-        sebt=(Button)findViewById(R.id.sebt);
-        sebt.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                BluetoothGatt gatt = mBluetoothService.getGatt();
-                mBluetoothService.setService(gatt.getServices().get(gatt.getServices().size()-1));
-
-            }
-        });
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                    finish();
-
-            }
-        });
-
-
-        testw.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(OperationActivity.this,"bt",Toast.LENGTH_SHORT).show();
-                BluetoothGattService service = mBluetoothService.getService();
-                mBluetoothService.setCharacteristic((service.getCharacteristics().get(service.getCharacteristics().size()-1)));
-                mBluetoothService.setCharaProp(2);
-                showData();
-
-            }
-        });
-
-        tests.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(OperationActivity.this,"bt2",Toast.LENGTH_SHORT).show();
-                BluetoothGattService service = mBluetoothService.getService();
-                mBluetoothService.setCharacteristic((service.getCharacteristics().get(service.getCharacteristics().size()-2)));
-                mBluetoothService.setCharaProp(1);
-                showData();
-
-            }
-        });
-
-
-    }
-
-
-
-
-    private void prepareFragment() {
-        fragments.add(new ServiceListFragment());
-        fragments.add(new CharacteristicListFragment());
-        fragments.add(new CharacteristicOperationFragment());
-        for (Fragment fragment : fragments) {
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment, fragment).hide(fragment).commit();
-        }
-    }
-
-    private void updateFragment(int position) {
-        if (position > fragments.size() - 1) {
-            return;
-        }
-        for (int i = 0; i < fragments.size(); i++) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            Fragment fragment = fragments.get(i);
-            if (i == position) {
-                transaction.show(fragment);
-            } else {
-                transaction.hide(fragment);
-            }
-            transaction.commit();
-        }
-    }
-
-    public BluetoothService getBluetoothService() {
-        return mBluetoothService;
-    }
-
-
 
     public void showData() {
         final BluetoothGattCharacteristic characteristic = mBluetoothService.getCharacteristic();
@@ -252,8 +193,6 @@ public class OperationActivity extends AppCompatActivity {
                     }
                 });
 
-
-
                 subbt.setText("打开通知1");
                 subbt.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -297,8 +236,6 @@ public class OperationActivity extends AppCompatActivity {
                     }
                 });
             }
-
-
 
     @Override
     protected void onDestroy() {

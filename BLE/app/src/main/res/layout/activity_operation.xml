@@ -60,10 +60,4 @@
         android:layout_below="@+id/conn"
         />
 
-    <Button
-        android:id="@+id/sebt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="连接" />
-
 </LinearLayout>
