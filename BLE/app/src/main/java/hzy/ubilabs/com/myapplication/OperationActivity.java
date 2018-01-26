@@ -97,7 +97,7 @@ public class OperationActivity extends AppCompatActivity {
                     }
 
                 });
-    }
+    }  //写数据
 
     private void StartBLEListenerAfter(int time ) {
         Timer timer=new Timer();
@@ -132,7 +132,18 @@ public class OperationActivity extends AppCompatActivity {
         service = mBluetoothService.getService();
         mBluetoothService.setCharacteristic((service.getCharacteristics().get(service.getCharacteristics().size()-2)));
         mBluetoothService.setCharaProp(1);
-        showData();
+        pubbt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String myMSG= eddt.getText().toString();
+
+                String hex =String.valueOf(HexUtil.encodeHex(myMSG.getBytes()));
+                if (TextUtils.isEmpty(hex)) {
+                    return;
+                }
+                writer(hex);
+            }
+        });
     }
 
     private void BLE_start_listener(){
@@ -150,8 +161,10 @@ public class OperationActivity extends AppCompatActivity {
                         OperationActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                backtxt.setText((String.valueOf(HexUtil.encodeHex(characteristic.getValue()))));
-                                back=(String.valueOf(HexUtil.encodeHex(characteristic.getValue())));
+                                String hexEncode=(String.valueOf(HexUtil.encodeHex(characteristic.getValue())));//得到16进制字符串
+                                byte[] bytes= HexUtil.hexStringToBytes(hexEncode);//转为byte类型
+                                back=(""+new String(bytes));//解出字符串
+                                backtxt.setText(back);
                             }
                         });
                     }
@@ -161,7 +174,7 @@ public class OperationActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 backtxt.setText((exception.toString()));
-                                StartBLEListenerAfter(100);
+                                StartBLEListenerAfter(100);//重新开始监听
                             }
                         });
                     }
@@ -170,7 +183,7 @@ public class OperationActivity extends AppCompatActivity {
 
                     }
                 });
-    }
+    }//蓝牙接收返回数据
 
     private void bindService() {
         Intent bindIntent = new Intent(this, BluetoothService.class);
@@ -207,19 +220,6 @@ public class OperationActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
-
-    public void showData() {
-                pubbt.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String hex = eddt.getText().toString();
-                        if (TextUtils.isEmpty(hex)) {
-                            return;
-                        }
-                        writer(hex);
-                    }
-                });
-            }
 
     private void unbindService() {
         this.unbindService(mFhrSCon);
