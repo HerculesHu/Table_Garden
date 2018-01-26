@@ -73,12 +73,12 @@ public class OperationActivity extends AppCompatActivity {
         bindService();
     }
 
-    public void writer(String hex){
+    public void writer(String msg){
         final BluetoothGattCharacteristic characteristic = mBluetoothService.getCharacteristic();
         mBluetoothService.write(
                 characteristic.getService().getUuid().toString(),
                 characteristic.getUuid().toString(),
-                hex,
+                String.valueOf(HexUtil.encodeHex(msg.getBytes())),
                 new BleCharacterCallback() {
 
                     @Override
@@ -135,13 +135,11 @@ public class OperationActivity extends AppCompatActivity {
         pubbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String myMSG= eddt.getText().toString();
-
-                String hex =String.valueOf(HexUtil.encodeHex(myMSG.getBytes()));
-                if (TextUtils.isEmpty(hex)) {
+                String msg= eddt.getText().toString();
+                if (TextUtils.isEmpty(msg)) {
                     return;
                 }
-                writer(hex);
+                writer(msg);
             }
         });
     }
