@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char* ssid = "Li-513";//连接的路由器的名字
-const char* password = "ubilabsdemo";//连接的路由器的密码
+const char* ssid = "NoderedDemo";//连接的路由器的名字
+const char* password = "nodereddemo";//连接的路由器的密码
 const char* mqtt_server = "123.206.127.199";//服务器的地址
 
 WiFiClient espClient;

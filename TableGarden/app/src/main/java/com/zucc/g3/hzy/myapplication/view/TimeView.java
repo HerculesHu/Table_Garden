@@ -152,7 +152,7 @@ public class TimeView extends View {
         valueSetPaint.setColor(Color.parseColor(valueSetColor));
         valueSetPaint.setTextSize(parseUtil.sp2px(textSize));
         valueSetPaint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawCircle( mCenterPoint.x,  mCenterPoint.y,parseUtil.dp2px((int)(viewSize_X/7.1)), innerPaint);
+        canvas.drawCircle( mCenterPoint.x,  mCenterPoint.y,parseUtil.dp2px((int)(viewSize_X/8.3)), innerPaint);
 
 
         if(openTime== (Integer.MAX_VALUE))
